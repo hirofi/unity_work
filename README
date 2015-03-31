@@ -1,0 +1,22 @@
+ルート　 ←ルート以下のプロジェクトファイル関連はコミットする
+├─Assets　 ←　このディレクトリはコミットする
+│  ├─Resources
+│  ├─s01
+│  └─s02
+├─Library  ←　このディレクトリはコミット不要
+│  ├─metadata
+ : : : : : : : : :
+│  ├─ScriptAssemblies
+│  └─ShaderCache
+ : : : : : : : : :
+├─ProjectSettings ←　このディレクトリはコミット不要
+└─target_Data ←　このディレクトリはコミット不要
+    ├─Managed
+    ├─Mono
+    │  └─etc
+    │      └─mono
+    │          ├─1.0
+    │          ├─2.0
+    │          │  └─Browsers
+    │          └─mconfig
+    └─Resources
