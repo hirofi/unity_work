@@ -13,10 +13,11 @@ public class ball : MonoBehaviour {
 		move_speed = aMoveSpeed;
 
 		Rigidbody rg = getRigidbody ();
-		rg.useGravity = false;
+		rg.useGravity = true;//false;
 
 		ConstantForce cf = rg.GetComponent<ConstantForce> ();
-		cf.force = target_point;//new Vector3(0,0,10);
+//		cf.force = target_point*aShotFrorce;//new Vector3(0,0,10);
+		cf.force = target_point * aShotFrorce;
 		cf.enabled = true;
 
 		Destroy (getGameObj(), 5);

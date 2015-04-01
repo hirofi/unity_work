@@ -78,7 +78,7 @@ public class s02 : MonoBehaviour {
 			var x = Input.mousePosition.x;
 			var y = Input.mousePosition.y;
 			
-			createBall( x , y , "ball_"+ball_count, 1000.0f, 10.0f );
+			createBall( x , y , "ball_"+ball_count, 100.0f, 10.0f );
 			ball_count++;
 
 		}
@@ -150,18 +150,27 @@ public class s02 : MonoBehaviour {
 		if (_setCamera == null)
 			_setCamera = Camera.main;
 
-//		Vector3 start_pos = _setCamera.transform.position; //+ _setCamera.ScreenToWorldPoint ( new Vector3 ( Screen.x/2, Screen.y/2 , 0 ) );
-		Vector3 start_pos = _setCamera.ScreenToWorldPoint ( new Vector3 ( Screen.width/2, Screen.height-50 , 4f) );
-		Vector3 target_point = _setCamera.ScreenToWorldPoint( new Vector3( aPanelX, aPanelY, 1.0f) );
+		Vector3 start_pos = _setCamera.transform.position; //+ _setCamera.ScreenToWorldPoint ( new Vector3 ( Screen.x/2, Screen.y/2 , 0 ) );
+//		Vector3 start_pos = _setCamera.ScreenToWorldPoint ( new Vector3 ( Screen.width/2, Screen.height-50 , 4f) );
+		Vector3 target_point = _setCamera.ScreenToWorldPoint( new Vector3( Screen.width - aPanelX, Screen.height - aPanelY, 1.0f) );
+
+
+//		start_pos.x = 0f;
+		start_pos.y = 1f;
+//		start_pos.z = 0f;
+
+//		target_point.x = 0f;
+		target_point.y = 0f;
+		target_point.z = 1f;
 
 //		var _ball = Instantiate( Resources.Load("pf_ball"), start_pos, _setCamera.transform.rotation) as GameObject;
-		Quaternion g;
-		g.x = 5;
-		g.y = 5;
-		g.z = 5;
-		g.w = 120;
+		Quaternion g = _setCamera.transform.rotation;
+		g.x = 1;
+		g.y = 0;
+		g.z = 0;
+		g.w = -90;
 
-		var _ball = Instantiate( Resources.Load("pf_ball"), start_pos, g  ) as GameObject;
+		var _ball = Instantiate( Resources.Load("pf_ball"), start_pos, g ) as GameObject;
 		_ball.name = aObjName;
 		
 		ball ball_cs = _ball.GetComponent<ball>();

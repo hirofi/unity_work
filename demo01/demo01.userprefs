@@ -2,13 +2,13 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\s02\s02.cs">
     <Files>
-      <File FileName="Assets\s02\s02.cs" Line="174" Column="37" />
-      <File FileName="Assets\Resources\ball.cs" Line="20" Column="21" />
+      <File FileName="Assets\s02\s02.cs" Line="163" Column="23" />
+      <File FileName="Assets\Resources\ball.cs" Line="17" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="C:\Users\inoue\Documents\demo01\Assets\s02\s02.cs" line="159" />
+      <Breakpoint file="C:\Users\inoue\Documents\unity_work\demo01\Assets\Resources\ball.cs" line="18" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
