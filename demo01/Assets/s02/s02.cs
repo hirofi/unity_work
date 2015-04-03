@@ -77,8 +77,10 @@ public class s02 : MonoBehaviour {
 			
 			var x = Input.mousePosition.x;
 			var y = Input.mousePosition.y;
-			
-			createBall( x , y , "ball_"+ball_count, 100.0f, 10.0f );
+
+			Vector2 input_mouse_pos = Input.mousePosition;
+
+			createBall( input_mouse_pos , "ball_"+ball_count, 100.0f, 10.0f );
 			ball_count++;
 
 		}
@@ -143,40 +145,66 @@ public class s02 : MonoBehaviour {
 		return tg;
 	}
 
-	public Camera _setCamera = null;
-	GameObject createBall( float aPanelX, float aPanelY, string aObjName, float aShotForce, float aMoveSpeed )
+	// Touch point 
+	//  (0,1)   (1,1)
+	//     +---+
+	//     |   |
+	//     +---+
+	// (0,0)   (1,0)
+
+	public Camera m_setCamera = null;
+	private const float TOUCH_PANEL_CONVERT_SCALE = 0.5f;
+	GameObject createBall( Vector2 aInputPosition, string aObjName, float aShotForce, float aMoveSpeed )
 	{
 
-		if (_setCamera == null)
-			_setCamera = Camera.main;
+		if (m_setCamera == null)
+			m_setCamera = Camera.main;
 
-		Vector3 start_pos = _setCamera.transform.position; //+ _setCamera.ScreenToWorldPoint ( new Vector3 ( Screen.x/2, Screen.y/2 , 0 ) );
-//		Vector3 start_pos = _setCamera.ScreenToWorldPoint ( new Vector3 ( Screen.width/2, Screen.height-50 , 4f) );
-		Vector3 target_point = _setCamera.ScreenToWorldPoint( new Vector3( Screen.width - aPanelX, Screen.height - aPanelY, 1.0f) );
+		// 玉のスタート位置を補正(カメラ位置から補正する）
+		Vector3 start_pos = m_setCamera.transform.position;
+		start_pos.y = 1.0f;
+		start_pos.z = -1.0f;
 
+		// パネルタッチ位置を縮尺して奥の方にターゲットを移動する
+		Vector2 scaled_touch = touchScaleConvert (aInputPosition , TOUCH_PANEL_CONVERT_SCALE );
+		Vector3 scaled_panel = new Vector3( scaled_touch.x, scaled_touch.y, 2.0f);
 
-//		start_pos.x = 0f;
-		start_pos.y = 1f;
-//		start_pos.z = 0f;
+		// ターゲット位置をワールド座標に変換
+		Vector3 target_point = m_setCamera.ScreenToWorldPoint( scaled_panel );
 
-//		target_point.x = 0f;
-		target_point.y = 0f;
+		// 玉のスタート位置がらターゲットの位置も補正する
+		target_point.y -= (start_pos.y * TOUCH_PANEL_CONVERT_SCALE );
 		target_point.z = 1f;
 
-//		var _ball = Instantiate( Resources.Load("pf_ball"), start_pos, _setCamera.transform.rotation) as GameObject;
-		Quaternion g = _setCamera.transform.rotation;
-		g.x = 1;
-		g.y = 0;
-		g.z = 0;
-		g.w = -90;
+		Quaternion rot = m_setCamera.transform.rotation;
 
-		var _ball = Instantiate( Resources.Load("pf_ball"), start_pos, g ) as GameObject;
+		var _ball = Instantiate( Resources.Load("pf_ball"), start_pos, rot ) as GameObject;
 		_ball.name = aObjName;
 		
 		ball ball_cs = _ball.GetComponent<ball>();
 		ball_cs.init( target_point, aShotForce, aMoveSpeed );
 		
 		return _ball;
+	}
+
+	Vector2 touchScaleConvert( Vector2 aPosition, float aScale )
+	{
+		if (aScale > 1)
+			aScale = 1;
+
+		Vector2 scr_position = aPosition * aScale;
+
+		Vector2 scr_screen;
+		scr_screen.x = Screen.width * aScale;
+		scr_screen.y = Screen.height * aScale;
+
+		Vector2 scr_center_offset;
+		scr_center_offset.x = (Screen.width - scr_screen.x) / 2;
+		scr_center_offset.y = (Screen.height - scr_screen.y) / 2;
+
+		scr_position += scr_center_offset;
+
+		return scr_position;
 	}
 
 	void hitTarget( GameObject aTarget, float aScore )

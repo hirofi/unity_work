@@ -1,15 +1,13 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\s02\s02.cs">
     <Files>
-      <File FileName="Assets\s02\s02.cs" Line="163" Column="23" />
-      <File FileName="Assets\Resources\ball.cs" Line="17" Column="3" />
+      <File FileName="Assets\s02\s02.cs" Line="185" Column="56" />
+      <File FileName="Assets\Resources\ball.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="C:\Users\inoue\Documents\unity_work\demo01\Assets\Resources\ball.cs" line="18" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

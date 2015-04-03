@@ -16,8 +16,8 @@ public class ball : MonoBehaviour {
 		rg.useGravity = true;//false;
 
 		ConstantForce cf = rg.GetComponent<ConstantForce> ();
-//		cf.force = target_point*aShotFrorce;//new Vector3(0,0,10);
-		cf.force = target_point * aShotFrorce;
+//		cf.force = target_point * aShotFrorce;
+		cf.relativeForce = target_point * aShotFrorce;
 		cf.enabled = true;
 
 		Destroy (getGameObj(), 5);
@@ -52,13 +52,6 @@ public class ball : MonoBehaviour {
 
 		Rigidbody rg = getRigidbody ();
 		rg.AddForce (new Vector3 (h, v, 0f));
-/*
-			transform.Translate(new Vector3(h, v, 0f));
-		
-		var myforce = new Vector3 (0, 0, shot_force);
-		Rigidbody myball = getRigidbody();
-		myball.AddForce( myforce);
-*/
 	}
 
 	public Camera _setCamera = null;
@@ -71,7 +64,5 @@ public class ball : MonoBehaviour {
 		Vector3 right_down = _setCamera.ScreenToWorldPoint (new Vector3 (Screen.width, Screen.height, 10.0f));
 
 		Rigidbody rg = getRigidbody ();
-
-
 	}
 }
