@@ -16,9 +16,9 @@ public class ball : MonoBehaviour {
 		rg.useGravity = true;//false;
 
 		ConstantForce cf = rg.GetComponent<ConstantForce> ();
-//		cf.force = target_point * aShotFrorce;
-		cf.relativeForce = target_point * aShotFrorce;
-		cf.enabled = true;
+		cf.force = target_point * aShotFrorce;
+//		cf.relativeForce = target_point * aShotFrorce;
+		cf.enabled = false;
 
 		Destroy (getGameObj(), 5);
 	}
@@ -41,18 +41,29 @@ public class ball : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-//		addMyForce ();
+		addMyForce ();
 	}
 
-
+	private const float START_SCALE = 2;
+	float m_scale = START_SCALE;
 	void addMyForce()
 	{
-		float h = Input.GetAxis("Horizontal") * Time.deltaTime * move_speed;
-		float v = Input.GetAxis("Vertical") * Time.deltaTime * move_speed;
+//		float h = Input.GetAxis("Horizontal") * Time.deltaTime * move_speed;
+//		float v = Input.GetAxis("Vertical") * Time.deltaTime * move_speed;
 
+		Vector3 force = target_point * Time.deltaTime * move_speed;
+		move_speed -= 2;
 		Rigidbody rg = getRigidbody ();
-		rg.AddForce (new Vector3 (h, v, 0f));
-	}
+		rg.AddForce ( force ,ForceMode.Impulse );
+
+		if (m_scale > 1) {
+			m_scale -= 0.3f;
+			rg.mass -= 0.01f;
+			rg.transform.localScale = new Vector3 (m_scale, m_scale, m_scale);
+		} else {
+			rg.mass = 1;
+		}
+	}	
 
 	public Camera _setCamera = null;
 	void destroy()

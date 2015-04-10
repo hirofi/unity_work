@@ -1,10 +1,14 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEditor;
+
 
 // 他のカメラ
 //position  6.16, 0.67, 0
 //rotation 345, 275, 0
+
 
 
 public class s02 : MonoBehaviour {
@@ -28,46 +32,123 @@ public class s02 : MonoBehaviour {
 
 	private float m_score = 0;
 
+
+//	private EventManager m_event_manager;
+
+	private ControlManager m_manager_;
+	private ScoreObserver m_score_;
+	private PanelObserver m_panel_;
+
+	
+	
 	// Use this for initialization
 	void Start () {
-		gm_target = new GameObject[TARGET_MAX];
-		gm_target[0] = createBase(-3, 0, 1 , "target01");
-		gm_target[1] = createBase(-1, 0, 1 , "target02" );
-		gm_target[2] = createBase(1, 0, 1 , "target03" );
-		gm_target[3] = createBase(-2, 0, 5 , "target04" );
-		gm_target[4] = createBase(0, 0, 5 , "target05" );
-		gm_target[5] = createBase(2, 0, 5 , "target06" );
 
+
+//		m_event_manager = new EventManager();
+		createTarget ();
 		gm_ball = new GameObject[BALL_MAX];
 
 	}
+
+	void init_assetbandle()
+	{
+		// Clear Cache
+		Caching.CleanCache();
+	
+#if   UNITY_ANDROID && !UNITY_EDITOR
+			string url = &quot;https://dl.dropboxusercontent.com/Asset.unity3d.android.unity3d
+#elif UNITY_IPHONE  && !UNITY_EDITOR
+			string url = &quot;https://dl.dropboxusercontent.com/Asset.unity3d.iphone.unity3d
+#else
+			string url = "https://dl.dropboxusercontent.com/Asset.unity3d.unity3d?dl=1";
+#endif
+		
+		StartCoroutine (DownloadAndCache ("Particle System",url,1));
+		StartCoroutine (DownloadAndCache ("Sprite", url,1));
+
+	}
+
+	public IEnumerator DownloadAndCache (string assetName, string url, int version = 1)
+	{
+		// キャッシュシステムの準備が完了するのを待ちます
+		while (!Caching.ready)
+			yield return null;
+		
+		// 同じバージョンが存在する場合はアセットバンドルをキャッシュからロードする
+		// またはダウンロードしてキャッシュに格納します。
+		using (WWW www = WWW.LoadFromCacheOrDownload(url, version) )
+		{
+			yield return www;
+			if (www.error != null) {
+				throw new Exception ("WWWダウンロードにエラーがありました:" + www.error);
+			}
+			
+			AssetBundle bundle = www.assetBundle;
+			if (assetName == "")
+				Instantiate ( bundle.mainAsset );
+			else
+				Instantiate ( bundle.LoadAsset (assetName) );
+			// メモリ節約のため圧縮されたアセットバンドルのコンテンツをアンロード
+			bundle.Unload (false);
+			
+		} // memory is freed from the web stream (www.Dispose() gets called implicitly)
+		
+		Debug.Log(Caching.IsVersionCached(url, 1));
+		Debug.Log("DownloadAndCache end");
+	}
+
+	// ターゲット作成
+	void createTarget()
+	{
+		gm_target = new GameObject[TARGET_MAX];
+		gm_target[0] = createBase(-3, 0, 1 , "target01" );
+		gm_target[1] = createBase(-1, 0, 1 , "target02" );
+		gm_target[2] = createBase( 1, 0, 1 , "target03" );
+		gm_target[3] = createBase(-2,1,4, "target04" );
+		gm_target[4] = createBase(0, 1,4, "target05" );
+		gm_target[5] = createBase(2, 1, 4 , "target06" );
+		gm_target[6] = createBase(-3, 2, 7 , "target07" );
+		gm_target[7] = createBase(-1, 2, 7 , "target08" );
+		gm_target[8] = createBase(1, 2, 7 , "target09" );
+	}
+
+	void animTarget(int aFrameCount )
+	{
+		if (is_already_start)
+			return;
+
+		if ( aFrameCount == 5 )
+		{
+			gm_target [0].GetComponent<target> ().anim_start ();
+			gm_target [3].GetComponent<target> ().anim_start ();
+			gm_target [6].GetComponent<target> ().anim_start ();
+		}
+		if ( aFrameCount == 10 )
+		{
+			gm_target [1].GetComponent<target> ().anim_start ();
+			gm_target [4].GetComponent<target> ().anim_start ();
+			gm_target [7].GetComponent<target> ().anim_start ();
+		}
+		if ( aFrameCount == 15 )
+		{
+			gm_target [2].GetComponent<target> ().anim_start ();
+			gm_target [5].GetComponent<target> ().anim_start ();
+			gm_target [8].GetComponent<target> ().anim_start ();
+			is_already_start = true;
+		}
+	}
+	
 	
 	// Update is called once per frame
 	void Update () {
 		frame_count = (frame_count >= 65535) ? 0 : frame_count+1;
-
-		if (!is_already_start) {
-			if (frame_count == 5) 
-			{
-				gm_target [0].GetComponent<target> ().anim_start ();
-				gm_target [3].GetComponent<target> ().anim_start ();
-			}
-			if (frame_count == 10) 
-			{
-				gm_target [1].GetComponent<target> ().anim_start ();
-				gm_target [4].GetComponent<target> ().anim_start ();
-			}
-			if (frame_count == 15) {
-				gm_target [2].GetComponent<target> ().anim_start ();
-				gm_target [5].GetComponent<target> ().anim_start ();
-				is_already_start = true;
-			}
-		}
+		animTarget ( frame_count );
 
 		this.checkMoouseButton();
 		this.checkTach();
 
-		this.moveTarget(1);
+//		this.moveTarget(1);
 
 	}
 
@@ -80,7 +161,7 @@ public class s02 : MonoBehaviour {
 
 			Vector2 input_mouse_pos = Input.mousePosition;
 
-			createBall( input_mouse_pos , "ball_"+ball_count, 100.0f, 10.0f );
+			createBall( input_mouse_pos , "ball_"+ball_count, 50.0f, 100.0f );
 			ball_count++;
 
 		}
@@ -131,14 +212,32 @@ public class s02 : MonoBehaviour {
 		var mypos = transform.position;
 		var addpos = new Vector3( aX, aY, aZ);
 		mypos += addpos;
-		
+
+		// インスタンス生成
+		BinaryAccess bin = new BinaryAccess ();
+		string path = bin.getAssetPath ();
+
+		Texture tx = null;
+
+		if (path != "") {
+			string tx_path = path + "/png/kasa.png";
+			tx = bin.ReadTexture (tx_path, 10, 10);
+		}
+
 		var tg = Instantiate( Resources.Load("pf_target"), mypos, transform.rotation) as GameObject;
 		tg.name = aObjName;
 
+		// マトオブジェクトを取り出す
 		target tg_cs = tg.GetComponent<target>();
 		tg_cs.anim_ready();
 
+		// テクスチャを張り替える
 		GameObject tgc = tg_cs.getTargetCylinder();
+
+		if(tx)
+			tgc.GetComponent<Renderer>().material.mainTexture = tx;
+
+		// スクリプトにコデリゲートのメソッドを追加する
 		target_cylinder tgc_cs = tgc.GetComponent<target_cylinder>();
 		tgc_cs.onHit += hitTarget;
 
@@ -217,5 +316,5 @@ public class s02 : MonoBehaviour {
 
 	}
 
-
 }
+
