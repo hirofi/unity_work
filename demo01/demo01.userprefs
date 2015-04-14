@@ -1,20 +1,6 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Classes\main\model\ball.cs">
-    <Files>
-      <File FileName="demo01.sln" Line="47" Column="1" />
-      <File FileName="Assets\Classes\main\model\s02.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\model\ball.cs" Line="18" Column="2" />
-      <File FileName="Assets\Classes\main\model\CommonDataFileModel.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\model\ContentsDownloadApiModel.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\CommonDataController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\TargetEventController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\EventManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\GameMainController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\model\target_cylinder.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\model\target.cs" Line="1" Column="1" />
-    </Files>
-  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="C:\Users\inoue\Documents\unity_work\demo01\Assets\Classes\main\controller\EventManager.cs" line="124" />
