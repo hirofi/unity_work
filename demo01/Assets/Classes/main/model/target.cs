@@ -11,15 +11,7 @@ public class target : MonoBehaviour {
 	}
 
 	private enmTargetStatus target_status;
-/*
-	public delegate void OnHitDelegate( GameObject aTarget, float aScore );
-	public event OnHitDelegate onHit;
 
-	public void DoHit( float aScore )
-	{
-		onHit ( gameObject, aScore);
-	}
-*/
 	// Use this for initialization
 	void Start () {
 		target_status = enmTargetStatus.READY;
@@ -27,7 +19,7 @@ public class target : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-//		checkStatus ();
+		;
 	}
 
 	////////////////
@@ -54,21 +46,6 @@ public class target : MonoBehaviour {
 	{
 		// ヒンジのスプリングを有効にし、値をセット
 		getHingeJoint ().useSpring = true;
-	}
-
-	// 的のステータスを確認し、内部変数に保持する
-	void checkStatus()
-	{
-
-		HingeJoint hj = getHingeJoint().GetComponent<HingeJoint> ();
-		if( hj.angle < 180 && hj.angle >= 181 && target_status == enmTargetStatus.READY )
-		{
-			target_status = enmTargetStatus.HIT;
-
-			// 当たりにつきイベント発行
-//			DoHit(10);
-		}
-
 	}
 
 	// 的のステータスを取得

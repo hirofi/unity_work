@@ -33,19 +33,15 @@ public class s02 : MonoBehaviour {
 	private float m_score = 0;
 
 
-//	private EventManager m_event_manager;
 
-	private ControlManager m_manager_;
-	private ScoreObserver m_score_;
-	private PanelObserver m_panel_;
-
-	
+	void Awake()
+	{
+	}
 	
 	// Use this for initialization
 	void Start () {
 
-
-//		m_event_manager = new EventManager();
+		SetupListeners ();
 		createTarget ();
 		gm_ball = new GameObject[BALL_MAX];
 
@@ -53,15 +49,17 @@ public class s02 : MonoBehaviour {
 
 	void init_assetbandle()
 	{
+
+
 		// Clear Cache
 		Caching.CleanCache();
 	
 #if   UNITY_ANDROID && !UNITY_EDITOR
-			string url = &quot;https://dl.dropboxusercontent.com/Asset.unity3d.android.unity3d
+		string url = "pshpz01.isl.gacha.fujitv.co.jp/unity/pf_target.unity3d.android.unity3d";
 #elif UNITY_IPHONE  && !UNITY_EDITOR
-			string url = &quot;https://dl.dropboxusercontent.com/Asset.unity3d.iphone.unity3d
+		string url = "pshpz01.isl.gacha.fujitv.co.jp/unity/pf_target.unity3d.iphone.unity3d";
 #else
-			string url = "https://dl.dropboxusercontent.com/Asset.unity3d.unity3d?dl=1";
+		string url = "pshpz01.isl.gacha.fujitv.co.jp/unity/pf_target.unity3d.unity3d?dl=1";
 #endif
 		
 		StartCoroutine (DownloadAndCache ("Particle System",url,1));
@@ -111,6 +109,8 @@ public class s02 : MonoBehaviour {
 		gm_target[6] = createBase(-3, 2, 7 , "target07" );
 		gm_target[7] = createBase(-1, 2, 7 , "target08" );
 		gm_target[8] = createBase(1, 2, 7 , "target09" );
+
+
 	}
 
 	void animTarget(int aFrameCount )
@@ -237,9 +237,12 @@ public class s02 : MonoBehaviour {
 		if(tx)
 			tgc.GetComponent<Renderer>().material.mainTexture = tx;
 
+
 		// スクリプトにコデリゲートのメソッドを追加する
-		target_cylinder tgc_cs = tgc.GetComponent<target_cylinder>();
-		tgc_cs.onHit += hitTarget;
+//		target_cylinder tgc_cs = tgc.GetComponent<target_cylinder>();
+//		tgc_cs.onHit += hitTarget;
+
+//		EventManager.Instance.AddListener<TargetEventController> (tg_cs.OnHit);
 
 		return tg;
 	}
@@ -306,10 +309,23 @@ public class s02 : MonoBehaviour {
 		return scr_position;
 	}
 
-	void hitTarget( GameObject aTarget, float aScore )
-	{
-		m_score += aScore;
+	// イベントリスナーの登録
 
+	public void SetupListeners()
+	{
+		EventManager.Instance.AddListener<TargetEventController> (OnHitTarget);
+	}
+
+	public void Dispose()
+	{
+		EventManager.Instance.RemoveListener<TargetEventController> (OnHitTarget);
+	}
+
+	public void OnHitTarget( TargetEventController aEvent )
+	{
+
+		m_score += aEvent.Score;
+		
 		GameObject txt_score_obj = GameObject.Find( "txtScore" );
 		Text txt_score = txt_score_obj.GetComponent<Text> ();
 		txt_score.text = "SCORE:"+m_score;
