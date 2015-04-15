@@ -1,22 +1,23 @@
-﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Classes\main\controller\EventManager.cs">
+﻿<Properties GitUserInfo="UsingMD">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Classes\main\controller\target_cylinder.cs">
     <Files>
-      <File FileName="Assets\Classes\main\controller\DownloadEventController.cs" Line="16" Column="40" />
-      <File FileName="Assets\Classes\main\controller\s02.cs" Line="311" Column="2" />
-      <File FileName="Assets\Classes\main\model\ContentsDownloadApiModel.cs" Line="40" Column="2" />
       <File FileName="Assets\Classes\main\controller\TargetEventController.cs" Line="17" Column="1" />
-      <File FileName="Assets\Classes\main\controller\GameMainController.cs" Line="41" Column="4" />
-      <File FileName="Assets\Classes\main\controller\target.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\model\CommonDataFileModel.cs" Line="28" Column="3" />
+      <File FileName="Assets\Classes\main\controller\DownloadEventController.cs" Line="14" Column="21" />
+      <File FileName="Assets\Classes\main\controller\GameMainController.cs" Line="17" Column="17" />
+      <File FileName="Assets\Classes\main\controller\DownloadController.cs" Line="38" Column="3" />
       <File FileName="Assets\Classes\main\controller\CommonDataController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\EventManager.cs" Line="31" Column="85" />
-      <File FileName="Assets\Classes\main\controller\target_cylinder.cs" Line="16" Column="32" />
+      <File FileName="Assets\Classes\main\model\CommonDataFileModel.cs" Line="1" Column="1" />
+      <File FileName="Assets\Classes\main\controller\target_cylinder.cs" Line="46" Column="49" />
+      <File FileName="Assets\Classes\main\controller\target.cs" Line="1" Column="1" />
+      <File FileName="Assets\Classes\main\controller\s02.cs" Line="321" Column="70" />
+      <File FileName="Assets\Classes\main\controller\EventManager.cs" Line="17" Column="48" />
+      <File FileName="Assets\Classes\main\model\ContentsDownloadApiModel.cs" Line="35" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="C:\Users\inoue\Documents\unity_work\demo01\Assets\Classes\main\controller\GameMainController.cs" line="41" />
+      <Breakpoint file="C:\Users\inoue\Documents\unity_work\demo01\Assets\Classes\main\controller\target_cylinder.cs" line="46" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

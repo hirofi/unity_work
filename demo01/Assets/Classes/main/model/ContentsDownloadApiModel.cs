@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System;
+using System.Collections;
 
-public class CommonContents : MonoBehaviour {
+public class ContentsDownloadApiModel : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
@@ -14,27 +14,28 @@ public class CommonContents : MonoBehaviour {
 	
 	}
 
-	void getAssetBandle( string aDounloadFileName )
+	string m_url = "pshpz01.isl.gacha.fujitv.co.jp/unity/";
+
+	public void GetAssetBandle( string aDownloadFileName )
 	{
 
 		// Clear Cache
 		Caching.CleanCache();
-		
+
 #if   UNITY_ANDROID && !UNITY_EDITOR
-		string url = "pshpz01.isl.gacha.fujitv.co.jp/unity/pf_target.unity3d.android.unity3d";
+		string url = this.m_url + aDownloadFileName + ".unity3d.android.unity3d";
 #elif UNITY_IPHONE  && !UNITY_EDITOR
-		string url = "pshpz01.isl.gacha.fujitv.co.jp/unity/pf_target.unity3d.iphone.unity3d";
+		string url = this.m_url + aDownloadFileName + ".unity3d.iphone.unity3d";
 #else
-		string url = "pshpz01.isl.gacha.fujitv.co.jp/unity/" + aDounloadFileName + ".unity3d.unity3d?dl=1";
+		string url = "http://" + this.m_url + aDownloadFileName + ".unity3d.unity3d?dl=1";
 #endif
 		
-		StartCoroutine (DownloadAndCache ("Particle System",url,1));
-		StartCoroutine (DownloadAndCache ("Sprite", url,1));
-		
+		StartCoroutine ( DownloadAndCache( aDownloadFileName, url, 0 ) );
 	}
 
-	public IEnumerator DownloadAndCache (string assetName, string url, int version = 1)
+	private IEnumerator DownloadAndCache (string assetName, string url, int version = 1)
 	{
+
 		// キャッシュシステムの準備が完了するのを待ちます
 		while (!Caching.ready)
 			yield return null;
@@ -57,7 +58,8 @@ public class CommonContents : MonoBehaviour {
 			bundle.Unload (false);
 			
 		} // memory is freed from the web stream (www.Dispose() gets called implicitly)
-		
+
+		yield return null;
 		Debug.Log(Caching.IsVersionCached(url, 1));
 		Debug.Log("DownloadAndCache end");
 	}

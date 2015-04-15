@@ -10,8 +10,8 @@ public class DownloadEventController : GameEvent {
 		ENTRY_MAX
 	}
 
-	private string m_url;
-	private string m_file_name;
+	string m_url;
+	string m_file_name;
 
 	public DownloadEventController( string aFileName )
 	{

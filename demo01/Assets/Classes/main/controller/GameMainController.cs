@@ -3,9 +3,10 @@ using System.Collections;
 
 public class GameMainController : MonoBehaviour {
 
-
 	void Awake()
 	{
+		SetupListeners ();
+
 	//	m_target = new TargetEventController;
 	//	EventManager.Instance.AddListener<TargetEventController> (OnHit);
 		GameObject main = GameObject.Find ("EventManagerGameObject");
@@ -36,9 +37,30 @@ public class GameMainController : MonoBehaviour {
 		Application.LoadLevel ( "s02" );
 	}
 
-	public void OnDownloadStart()
+	public void OnClickStartDownload()
 	{
-		;
+		DownloadController download = new DownloadController ();
+
+		download.FileName = "pf_target";
+		download.DomainName = "pshpz01.isl.gacha.fujitv.co.jp/unity/";
+
+		download.StartDownload();
+	}
+
+	//　ダウンロードイベントリスナーの登録
+	public void SetupListeners()
+	{
+		EventManager.Instance.AddListener<DownloadEventController> (OnCompleateDownload);
+	}
+	
+	public void Dispose()
+	{
+		EventManager.Instance.RemoveListener<DownloadEventController> (OnCompleateDownload);
+	}
+	
+	public void OnCompleateDownload( DownloadEventController aEvent )
+	{
+		Debug.Log ("downloaded.");
 	}
 
 }

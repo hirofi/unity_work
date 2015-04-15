@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Classes\main\controller\CommonDataController.cs" />
+     <Compile Include="Assets\Classes\main\controller\DownloadController.cs" />
      <Compile Include="Assets\Classes\main\controller\DownloadEventController.cs" />
      <Compile Include="Assets\Classes\main\controller\EventManager.cs" />
      <Compile Include="Assets\Classes\main\controller\GameMainController.cs" />

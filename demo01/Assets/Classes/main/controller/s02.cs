@@ -332,10 +332,5 @@ public class s02 : MonoBehaviour {
 
 	}
 
-	// データダウンロードイベントリスナーの登録
-	public void OnCompleatFileDownload( DownloadEventController aEvent )
-	{
-
-	}
 }
 
