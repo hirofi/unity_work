@@ -6,23 +6,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class GameEvent //: MonoBehaviour
+public class GameEvent
 {
-	/*
-	public enum enmGameEventType
-	{
-		SCENE_CHANGE,
-		ENTRY_MAX
-	}
-	
-	enmGameEventType m_type;
-	int m_count;
-	string m_message;
-
-	public int count{	set{this.m_count = value; }		get{ return this.m_count; }}
-	public string message{	set{this.m_message = value; }	get{ return this.m_message; }}
-	public enmGameEventType type{	set{this.m_type = value; }		get{ return this.m_type; }}
-	*/
 }
 
 public class EventManager : MonoBehaviour

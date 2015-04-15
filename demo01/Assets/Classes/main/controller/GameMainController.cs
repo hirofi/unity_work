@@ -8,7 +8,7 @@ public class GameMainController : MonoBehaviour {
 	{
 	//	m_target = new TargetEventController;
 	//	EventManager.Instance.AddListener<TargetEventController> (OnHit);
-		GameObject main = GameObject.Find ("GameMain");
+		GameObject main = GameObject.Find ("EventManagerGameObject");
 		DontDestroyOnLoad( main );
 	}
 
@@ -36,5 +36,9 @@ public class GameMainController : MonoBehaviour {
 		Application.LoadLevel ( "s02" );
 	}
 
+	public void OnDownloadStart()
+	{
+		;
+	}
 
 }

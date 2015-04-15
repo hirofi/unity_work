@@ -47,10 +47,11 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Classes\main\controller\CommonDataController.cs" />
+     <Compile Include="Assets\Classes\main\controller\DownloadEventController.cs" />
      <Compile Include="Assets\Classes\main\controller\EventManager.cs" />
      <Compile Include="Assets\Classes\main\controller\GameMainController.cs" />
      <Compile Include="Assets\Classes\main\controller\TargetEventController.cs" />
-     <Compile Include="Assets\Classes\main\controller\pf_BallControll.cs" />
+     <Compile Include="Assets\Classes\main\controller\ball.cs" />
      <Compile Include="Assets\Classes\main\controller\s02.cs" />
      <Compile Include="Assets\Classes\main\controller\target.cs" />
      <Compile Include="Assets\Classes\main\controller\target_cylinder.cs" />
