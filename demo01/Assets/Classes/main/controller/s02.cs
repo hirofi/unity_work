@@ -215,12 +215,12 @@ public class s02 : MonoBehaviour {
 		string path = bin.getAssetPath ();
 
 		Texture tx = null;
-
+/*
 		if (path != "") {
 			string tx_path = path + "/png/kasa.png";
 			tx = bin.ReadTexture (tx_path, 10, 10);
 		}
-
+*/
 		GameObject tg;
 		if (aTargetType == 1) {
 			tg = Instantiate (Resources.Load ("pf_target"), mypos, transform.rotation) as GameObject;
