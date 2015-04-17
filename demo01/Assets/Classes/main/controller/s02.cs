@@ -2,14 +2,12 @@ using UnityEngine;
 using System;
 using System.Collections;
 using UnityEngine.UI;
-using UnityEditor;
+//using UnityEditor;
 
 
 // 他のカメラ
 //position  6.16, 0.67, 0
 //rotation 345, 275, 0
-
-
 
 public class s02 : MonoBehaviour {
 
@@ -31,7 +29,6 @@ public class s02 : MonoBehaviour {
 	private int move_axis = 1;
 
 	private float m_score = 0;
-
 
 
 	void Awake()
@@ -100,15 +97,15 @@ public class s02 : MonoBehaviour {
 	void createTarget()
 	{
 		gm_target = new GameObject[TARGET_MAX];
-		gm_target[0] = createBase(-3, 0, 1 , "target01" );
-		gm_target[1] = createBase(-1, 0, 1 , "target02" );
-		gm_target[2] = createBase( 1, 0, 1 , "target03" );
-		gm_target[3] = createBase(-2,1,4, "target04" );
-		gm_target[4] = createBase(0, 1,4, "target05" );
-		gm_target[5] = createBase(2, 1, 4 , "target06" );
-		gm_target[6] = createBase(-3, 2, 7 , "target07" );
-		gm_target[7] = createBase(-1, 2, 7 , "target08" );
-		gm_target[8] = createBase(1, 2, 7 , "target09" );
+		gm_target[0] = createBase(-3, 0, 1 , "target01" , 1);
+		gm_target[1] = createBase(-1, 0, 1 , "target02" , 1);
+		gm_target[2] = createBase( 1, 0, 1 , "target03" , 1 );
+		gm_target[3] = createBase(-2,1,4, "target04" , 1);
+		gm_target[4] = createBase(0, 1,4, "target05" , 1);
+		gm_target[5] = createBase(2, 1, 4 , "target06" , 1);
+		gm_target[6] = createBase(-3, 2, 7 , "target07" , 2);
+		gm_target[7] = createBase(-1, 2, 7 , "target08" , 2);
+		gm_target[8] = createBase(1, 2, 7 , "target09" , 2);
 
 
 	}
@@ -122,19 +119,19 @@ public class s02 : MonoBehaviour {
 		{
 			gm_target [0].GetComponent<target> ().anim_start ();
 			gm_target [3].GetComponent<target> ().anim_start ();
-			gm_target [6].GetComponent<target> ().anim_start ();
+			gm_target [6].GetComponent<TargetKasaPrefab> ().anim_start ();
 		}
 		if ( aFrameCount == 10 )
 		{
 			gm_target [1].GetComponent<target> ().anim_start ();
 			gm_target [4].GetComponent<target> ().anim_start ();
-			gm_target [7].GetComponent<target> ().anim_start ();
+			gm_target [7].GetComponent<TargetKasaPrefab> ().anim_start ();
 		}
 		if ( aFrameCount == 15 )
 		{
 			gm_target [2].GetComponent<target> ().anim_start ();
 			gm_target [5].GetComponent<target> ().anim_start ();
-			gm_target [8].GetComponent<target> ().anim_start ();
+			gm_target [8].GetComponent<TargetKasaPrefab> ().anim_start ();
 			is_already_start = true;
 		}
 	}
@@ -207,7 +204,7 @@ public class s02 : MonoBehaviour {
 
 	}
 
-	GameObject createBase( float aX, float aY, float aZ ,string aObjName )
+	GameObject createBase( float aX, float aY, float aZ ,string aObjName ,int aTargetType )
 	{
 		var mypos = transform.position;
 		var addpos = new Vector3( aX, aY, aZ);
@@ -224,25 +221,27 @@ public class s02 : MonoBehaviour {
 			tx = bin.ReadTexture (tx_path, 10, 10);
 		}
 
-		var tg = Instantiate( Resources.Load("pf_target"), mypos, transform.rotation) as GameObject;
+		GameObject tg;
+		if (aTargetType == 1) {
+			tg = Instantiate (Resources.Load ("pf_target"), mypos, transform.rotation) as GameObject;
+
+			// マトオブジェクトを取り出す
+			target tg_cs = tg.GetComponent<target> ();
+			tg_cs.anim_ready ();
+			
+			// テクスチャを張り替える
+			GameObject tgc = tg_cs.getTargetCylinder ();
+			
+			if (tx)
+				tgc.GetComponent<Renderer> ().material.mainTexture = tx;
+
+		} else {
+			tg = Instantiate ( Resources.Load ("target_kasa_prefab"), mypos, transform.rotation ) as GameObject;
+			tg.transform.rotation = Quaternion.FromToRotation(transform.up,transform.up);
+		}
+
+
 		tg.name = aObjName;
-
-		// マトオブジェクトを取り出す
-		target tg_cs = tg.GetComponent<target>();
-		tg_cs.anim_ready();
-
-		// テクスチャを張り替える
-		GameObject tgc = tg_cs.getTargetCylinder();
-
-		if(tx)
-			tgc.GetComponent<Renderer>().material.mainTexture = tx;
-
-
-		// スクリプトにコデリゲートのメソッドを追加する
-//		target_cylinder tgc_cs = tgc.GetComponent<target_cylinder>();
-//		tgc_cs.onHit += hitTarget;
-
-//		EventManager.Instance.AddListener<TargetEventController> (tg_cs.OnHit);
 
 		return tg;
 	}
@@ -314,11 +313,13 @@ public class s02 : MonoBehaviour {
 	public void SetupListeners()
 	{
 		EventManagerController.Instance.AddListener<TargetEventController> (OnHitTarget);
+		EventManagerController.Instance.AddListener<TargetKasaEventController> (OnHitKasaTarget);
 	}
 
 	public void Dispose()
 	{
 		EventManagerController.Instance.RemoveListener<TargetEventController> (OnHitTarget);
+		EventManagerController.Instance.RemoveListener<TargetKasaEventController> (OnHitKasaTarget);
 	}
 
 	public void OnHitTarget( TargetEventController aEvent )
@@ -330,7 +331,23 @@ public class s02 : MonoBehaviour {
 		Text txt_score = txt_score_obj.GetComponent<Text> ();
 		txt_score.text = "SCORE:"+m_score;
 
+		Debug.Log("■OnHitTarget = " + aEvent.getHash().ToString("x4"));
 	}
+
+	public void OnHitKasaTarget( TargetKasaEventController aEvent )
+	{
+		
+		m_score += aEvent.Score;
+		m_score += aEvent.Bonus;
+		
+		GameObject txt_score_obj = GameObject.Find( "txtScore" );
+		Text txt_score = txt_score_obj.GetComponent<Text> ();
+		txt_score.text = "SCORE:"+m_score;
+
+		int k = aEvent.getHash ();
+		Debug.Log("★OnHitTarget = " + aEvent.getHash().ToString("x4"));
+	}
+
 
 }
 

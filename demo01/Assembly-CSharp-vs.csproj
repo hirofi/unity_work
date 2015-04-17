@@ -52,6 +52,8 @@
      <Compile Include="Assets\Classes\main\controller\EventManagerController.cs" />
      <Compile Include="Assets\Classes\main\controller\GameMainController.cs" />
      <Compile Include="Assets\Classes\main\controller\TargetEventController.cs" />
+     <Compile Include="Assets\Classes\main\controller\TargetKasaEventController.cs" />
+     <Compile Include="Assets\Classes\main\controller\TargetKasaPrefab.cs" />
      <Compile Include="Assets\Classes\main\controller\ball.cs" />
      <Compile Include="Assets\Classes\main\controller\s02.cs" />
      <Compile Include="Assets\Classes\main\controller\target.cs" />
