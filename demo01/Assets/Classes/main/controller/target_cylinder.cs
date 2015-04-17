@@ -26,7 +26,7 @@ public class target_cylinder : MonoBehaviour {
 	// 当たりが発生したらイベントマネージャに通知(イベントキュー)
 	public void DoHit( int aScore )
 	{
-		EventManager.Instance.QueueEvent (new TargetEventController( aScore ) );
+		EventManagerController.Instance.QueueEvent (new TargetEventController( aScore ) );
 	}
 
 	private void OnCollisionEnter(Collision aCollision)

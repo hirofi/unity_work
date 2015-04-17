@@ -50,12 +50,12 @@ public class GameMainController : MonoBehaviour {
 	//　ダウンロードイベントリスナーの登録
 	public void SetupListeners()
 	{
-		EventManager.Instance.AddListener<DownloadEventController> (OnCompleateDownload);
+		EventManagerController.Instance.AddListener<DownloadEventController> (OnCompleateDownload);
 	}
 	
 	public void Dispose()
 	{
-		EventManager.Instance.RemoveListener<DownloadEventController> (OnCompleateDownload);
+		EventManagerController.Instance.RemoveListener<DownloadEventController> (OnCompleateDownload);
 	}
 	
 	public void OnCompleateDownload( DownloadEventController aEvent )

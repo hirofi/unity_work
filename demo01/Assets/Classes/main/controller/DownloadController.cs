@@ -59,7 +59,7 @@ public class DownloadController /* : MonoBehaviour */ {
 	// ダウンロードが終了したいらイベントマネージャに通知(イベントキュー)
 	private void OnDownloadCompleate()
 	{
-		EventManager.Instance.QueueEvent ( new DownloadEventController(this.m_file_name) );
+		EventManagerController.Instance.QueueEvent ( new DownloadEventController(this.m_file_name) );
 	}
 
 }

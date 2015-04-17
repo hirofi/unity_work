@@ -49,6 +49,7 @@
      <Compile Include="Assets\Classes\main\controller\CommonDataController.cs" />
      <Compile Include="Assets\Classes\main\controller\DownloadController.cs" />
      <Compile Include="Assets\Classes\main\controller\DownloadEventController.cs" />
+     <Compile Include="Assets\Classes\main\controller\EventManagerController.cs" />
      <Compile Include="Assets\Classes\main\controller\GameMainController.cs" />
      <Compile Include="Assets\Classes\main\controller\TargetEventController.cs" />
      <Compile Include="Assets\Classes\main\controller\ball.cs" />
@@ -57,7 +58,6 @@
      <Compile Include="Assets\Classes\main\controller\target_cylinder.cs" />
      <Compile Include="Assets\Classes\main\model\CommonDataFileModel.cs" />
      <Compile Include="Assets\Classes\main\model\ContentsDownloadApiModel.cs" />
-     <Compile Include="Assets\Classes\main\model\EventManager.cs" />
      <Compile Include="Assets\Classes\main\util\BinaryAccess.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

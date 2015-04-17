@@ -313,12 +313,12 @@ public class s02 : MonoBehaviour {
 
 	public void SetupListeners()
 	{
-		EventManager.Instance.AddListener<TargetEventController> (OnHitTarget);
+		EventManagerController.Instance.AddListener<TargetEventController> (OnHitTarget);
 	}
 
 	public void Dispose()
 	{
-		EventManager.Instance.RemoveListener<TargetEventController> (OnHitTarget);
+		EventManagerController.Instance.RemoveListener<TargetEventController> (OnHitTarget);
 	}
 
 	public void OnHitTarget( TargetEventController aEvent )
