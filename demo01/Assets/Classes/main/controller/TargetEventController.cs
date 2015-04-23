@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TargetEventController : GameEvent {
+public class TargetEventController : GameEventDynamic {
 
 	private int m_score;
 	public TargetEventController( int aScore )

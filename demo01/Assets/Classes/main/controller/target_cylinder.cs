@@ -12,7 +12,7 @@ public class target_cylinder : MonoBehaviour {
 	}
 	
 	private enmTargetStatus target_status;
-	
+
 	// Use this for initialization
 	void Start () {
 		;
@@ -23,10 +23,17 @@ public class target_cylinder : MonoBehaviour {
 		;
 	}
 
+	private EventManagerDynamic m_event_manage_base = null;
+	public void SetEventManager( EventManagerDynamic aManagerBase )
+	{
+		m_event_manage_base = aManagerBase;
+	}
+
 	// 当たりが発生したらイベントマネージャに通知(イベントキュー)
 	public void DoHit( int aScore )
 	{
-		EventManagerController.Instance.QueueEvent (new TargetEventController( aScore ) );
+//		EventManagerController.Instance.QueueEvent (new TargetEventController( aScore ) );
+		m_event_manage_base.TriggerEvent ( new TargetEventController(aScore) );
 	}
 
 	private void OnCollisionEnter(Collision aCollision)

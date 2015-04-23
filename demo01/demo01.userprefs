@@ -1,24 +1,21 @@
 ﻿<Properties GitUserInfo="UsingMD">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Classes\main\controller\s02.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Classes\main\controller\DownloadController.cs">
     <Files>
-      <File FileName="Assets\Classes\main\controller\s02.cs" Line="217" Column="19" />
-      <File FileName="Assets\Classes\main\controller\EventManagerController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\ball.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\DownloadController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\target_cylinder.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\TargetEventController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\DownloadEventController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\TargetKasaPrefab.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\TargetKasaEventController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\CommonDataController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\target.cs" Line="1" Column="1" />
+      <File FileName="Assets\Classes\main\controller\EventManagerStatic.cs" Line="17" Column="3" />
+      <File FileName="c:\Users\inoue\Documents\unity_work\demo01\Assets\Classes\main\model\ContentsDownloadApiModel.cs" Line="1" Column="1" />
+      <File FileName="Assets\Classes\main\controller\s02.cs" Line="45" Column="2" />
+      <File FileName="Assets\Classes\main\controller\DownloadController.cs" Line="84" Column="2" />
+      <File FileName="Assets\Classes\main\controller\EventManagerDynamic.cs" Line="23" Column="20" />
+      <File FileName="Assets\Classes\main\controller\GameMainController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Classes\main\controller\DownloadEventController.cs" Line="4" Column="37" />
+      <File FileName="Assets\Classes\main\controller\TargetEventController.cs" Line="8" Column="3" />
+      <File FileName="Assets\Classes\main\controller\TargetKasaPrefab.cs" Line="35" Column="1" />
+      <File FileName="Assets\Classes\main\controller\target_cylinder.cs" Line="18" Column="4" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="C:\Users\inoue\Documents\unity_work\demo01\Assets\Classes\main\controller\s02.cs" line="219" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

@@ -2,46 +2,44 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class GameEvent
+/// <summary>
+/// イベントクラス（インスタンス生成）
+/// 1).イベント受け取り側クラスでこのマネージャを生成し
+/// 　　GameEventBase派生のイベントクラスで受けるリスナーを登録する。
+/// 2).イベント発行側クラスにこのクラスを渡し
+/// 　　発行側クラス内でイベントを発行する。
+/// 　　その際、GameEventBase派生のイベントクラスを引数に渡す。
+/// </summary>
+
+public class GameEventDynamic
 {
 	private int m_hash;
-	public GameEvent()
+	public GameEventDynamic()
 	{
 		float t = Time.realtimeSinceStartup;
 		m_hash = t.ToString().GetHashCode();
 	}
-
+	
 	public int getHash()
 	{
 		return m_hash;
 	}
 }
-
-public class EventManagerController : MonoBehaviour
-{
-	public bool LimitQueueProcesing = false;
-	public float QueueProcessTime = 0.0f;
-	private static EventManagerController s_Instance = null;
-	private Queue m_eventQueue = new Queue();
 	
-	public delegate void EventDelegate<T> (T e) where T : GameEvent;
-	private delegate void EventDelegate (GameEvent e);
+public class EventManagerDynamic
+{
+
+	private GameEventDynamic m_Instance = null;
+
+	public delegate void EventDelegate<T> (T e) where T : GameEventDynamic;
+	private delegate void EventDelegate (GameEventDynamic e);
 	
 	private Dictionary<System.Type, EventDelegate> delegates = new Dictionary<System.Type, EventDelegate>();
 	private Dictionary<System.Delegate, EventDelegate> delegateLookup = new Dictionary<System.Delegate, EventDelegate>();
 	private Dictionary<System.Delegate, bool> onceLookups = new Dictionary<System.Delegate, bool>();
 	
-	// override so we don't have the typecast the object
-	public static EventManagerController Instance {
-		get {
-			if (s_Instance == null) {
-				s_Instance = GameObject.FindObjectOfType (typeof(EventManagerController)) as EventManagerController;
-			}
-			return s_Instance;
-		}
-	}
-	
-	private EventDelegate AddDelegate<T>(EventDelegate<T> del) where T : GameEvent {
+
+	private EventDelegate AddDelegate<T>(EventDelegate<T> del) where T : GameEventDynamic {
 		// Early-out if we've already registered this delegate
 		if (delegateLookup.ContainsKey(del))
 			return null;
@@ -60,12 +58,14 @@ public class EventManagerController : MonoBehaviour
 		
 		return internalDelegate;
 	}
-	
-	public void AddListener<T> (EventDelegate<T> del) where T : GameEvent {
+
+	// リスナー登録
+	public void AddListener<T> (EventDelegate<T> del) where T : GameEventDynamic {
 		AddDelegate<T>(del);
 	}
-	
-	public void AddListenerOnce<T> (EventDelegate<T> del) where T : GameEvent {
+
+	// リスナー登録（ワンショット：１度イベントが発行されるとリスナーが削除される）
+	public void AddListenerOnce<T> (EventDelegate<T> del) where T : GameEventDynamic {
 		EventDelegate result = AddDelegate<T>(del);
 		
 		if(result != null){
@@ -73,8 +73,9 @@ public class EventManagerController : MonoBehaviour
 			onceLookups[result] = true;
 		}
 	}
-	
-	public void RemoveListener<T> (EventDelegate<T> del) where T : GameEvent {
+
+	// 指定されたイベントクラスに該当するリスナーを削除する
+	public void RemoveListener<T> (EventDelegate<T> del) where T : GameEventDynamic {
 		EventDelegate internalDelegate;
 		if (delegateLookup.TryGetValue(del, out internalDelegate)) {
 			EventDelegate tempDel;
@@ -90,18 +91,21 @@ public class EventManagerController : MonoBehaviour
 			delegateLookup.Remove(del);
 		}
 	}
-	
+
+	// 全てのリスナーを削除する
 	public void RemoveAll(){
 		delegates.Clear();
 		delegateLookup.Clear();
 		onceLookups.Clear();
 	}
-	
-	public bool HasListener<T> (EventDelegate<T> del) where T : GameEvent {
+
+	// 現在登録されているリスナーを取得する
+	public bool HasListener<T> (EventDelegate<T> del) where T : GameEventDynamic {
 		return delegateLookup.ContainsKey(del);
 	}
-	
-	public void TriggerEvent (GameEvent e) {
+
+	// イベント発行
+	public void TriggerEvent (GameEventDynamic e) {
 		EventDelegate del;
 		if (delegates.TryGetValue(e.GetType(), out del)) {
 			del.Invoke(e);
@@ -116,40 +120,8 @@ public class EventManagerController : MonoBehaviour
 			Debug.LogWarning("Event: " + e.GetType() + " has no listeners");
 		}
 	}
-	
-	//Inserts the event into the current queue.
-	public bool QueueEvent(GameEvent evt) {
-		if (!delegates.ContainsKey(evt.GetType())) {
-			Debug.LogWarning("EventManager: QueueEvent failed due to no listeners for event: " + evt.GetType());
-			return false;
-		}
-		
-		m_eventQueue.Enqueue(evt);
-		return true;
-	}
-	
-	//Every update cycle the queue is processed, if the queue processing is limited,
-	//a maximum processing time per update can be set after which the events will have
-	//to be processed next update loop.
-	void Update() {
-		float timer = 0.0f;
-		while (m_eventQueue.Count > 0) {
-			if (LimitQueueProcesing) {
-				if (timer > QueueProcessTime)
-					return;
-			}
-			
-			GameEvent evt = m_eventQueue.Dequeue() as GameEvent;
-			TriggerEvent(evt);
-			
-			if (LimitQueueProcesing)
-				timer += Time.deltaTime;
-		}
-	}
-	
-	public void OnApplicationQuit(){
-		RemoveAll();
-		m_eventQueue.Clear();
-		s_Instance = null;
-	}
+
+	// ウォッチドッグタイマーを作成しようと思ったが独立してタイマーが立てられないみたいなので
+	// キューはやめ。
+
 }

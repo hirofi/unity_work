@@ -22,11 +22,17 @@ public class TargetKasaPrefab : MonoBehaviour {
 	void Update () {
 		;
 	}
-	
+
+	private EventManagerDynamic m_event_manage_base = null;
+	public void SetEventManager( EventManagerDynamic aManagerBase )
+	{
+		m_event_manage_base = aManagerBase;
+	}
+
 	// 当たりが発生したらイベントマネージャに通知(イベントキュー)
 	public void DoHit( int aBouns , int aScore )
 	{
-		EventManagerController.Instance.TriggerEvent (new TargetKasaEventController( aBouns , aScore ) );
+		m_event_manage_base.TriggerEvent (new TargetKasaEventController (aBouns, aScore) );
 	}
 	
 	private void OnCollisionEnter(Collision aCollision)

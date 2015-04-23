@@ -23,12 +23,82 @@ public class s02 : MonoBehaviour {
 	private GameObject[] gm_target;
 	private int frame_count;
 	private bool is_already_start = false;
+	private bool is_load_compleate = false;
+	private bool is_target_create_compleate = false;
+
 	private int ball_count;
 
 	private int move_count = 0;
 	private int move_axis = 1;
 
 	private float m_score = 0;
+
+	public EventManagerDynamic m_download_event_manager = null;
+	public EventManagerDynamic m_target_event_manager = null;
+
+
+	void createDownloadEventManager()
+	{
+		m_download_event_manager = new EventManagerDynamic ();
+		m_download_event_manager.AddListener<DownloadEventController> (OnCompleateDownload);
+	}
+
+	public void OnCompleateDownload( DownloadEventController aEvent )
+	{
+
+		gm_target[ aEvent.Token.Index ] = aEvent.GameobjectData;
+		gm_target[aEvent.Token.Index].name = aEvent.Token.Name;
+		gm_target[aEvent.Token.Index].transform.position = aEvent.Token.Postion;
+
+		is_load_compleate = true;
+
+		// マトオブジェクトを取り出す
+		target tg_cs = gm_target[ aEvent.Token.Index ].GetComponent<target> ();
+		tg_cs.anim_ready ();
+		
+		// テクスチャを張り替える
+		GameObject tgc = tg_cs.getTargetCylinder ();
+		
+		// マトオブジェクトからイベントを発行する為にイベントマネージャを登録
+		target_cylinder tgc_cs = tgc.GetComponent<target_cylinder> ();
+		tgc_cs.SetEventManager( m_target_event_manager );
+
+		Debug.Log ("downloaded. path=" + aEvent.getLocalFilePath());
+	}
+
+	void createTargetEventManager()
+	{
+		m_target_event_manager = new EventManagerDynamic ();
+		m_target_event_manager.AddListener<TargetEventController> (OnHitTarget);
+		m_target_event_manager.AddListener<TargetKasaEventController> (OnHitKasaTarget);
+	}
+
+	public void OnHitTarget( TargetEventController aEvent )
+	{
+		
+		m_score += aEvent.Score;
+		
+		GameObject txt_score_obj = GameObject.Find( "txtScore" );
+		Text txt_score = txt_score_obj.GetComponent<Text> ();
+		txt_score.text = "SCORE:"+m_score;
+		
+		Debug.Log("■OnHitTarget = " + aEvent.getHash().ToString("x4"));
+	}
+	
+	public void OnHitKasaTarget( TargetKasaEventController aEvent )
+	{
+		
+		m_score += aEvent.Score;
+		m_score += aEvent.Bonus;
+		
+		GameObject txt_score_obj = GameObject.Find( "txtScore" );
+		Text txt_score = txt_score_obj.GetComponent<Text> ();
+		txt_score.text = "SCORE:"+m_score;
+		
+		int k = aEvent.getHash ();
+		Debug.Log("★OnHitTarget = " + aEvent.getHash().ToString("x4"));
+	}
+
 
 
 	void Awake()
@@ -38,66 +108,27 @@ public class s02 : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		SetupListeners ();
-		createTarget ();
+//		SetupListeners ();
+//		SetupDownloadListeners ();
+		createDownloadEventManager ();
+		createTargetEventManager ();
+
+		gm_target = new GameObject[TARGET_MAX];
+		createTargetAssetBase ();
+
 		gm_ball = new GameObject[BALL_MAX];
 
-	}
-/*
-	void init_assetbandle()
-	{
-
-
-		// Clear Cache
-		Caching.CleanCache();
-	
-#if   UNITY_ANDROID && !UNITY_EDITOR
-		string url = "pshpz01.isl.gacha.fujitv.co.jp/unity/pf_target.unity3d.android.unity3d";
-#elif UNITY_IPHONE  && !UNITY_EDITOR
-		string url = "pshpz01.isl.gacha.fujitv.co.jp/unity/pf_target.unity3d.iphone.unity3d";
-#else
-		string url = "pshpz01.isl.gacha.fujitv.co.jp/unity/pf_target.unity3d.unity3d?dl=1";
-#endif
-		
-		StartCoroutine (DownloadAndCache ("Particle System",url,1));
-		StartCoroutine (DownloadAndCache ("Sprite", url,1));
 
 	}
 
-	public IEnumerator DownloadAndCache (string assetName, string url, int version = 1)
-	{
-		// キャッシュシステムの準備が完了するのを待ちます
-		while (!Caching.ready)
-			yield return null;
-		
-		// 同じバージョンが存在する場合はアセットバンドルをキャッシュからロードする
-		// またはダウンロードしてキャッシュに格納します。
-		using (WWW www = WWW.LoadFromCacheOrDownload(url, version) )
-		{
-			yield return www;
-			if (www.error != null) {
-				throw new Exception ("WWWダウンロードにエラーがありました:" + www.error);
-			}
-			
-			AssetBundle bundle = www.assetBundle;
-			if (assetName == "")
-				Instantiate ( bundle.mainAsset );
-			else
-				Instantiate ( bundle.LoadAsset (assetName) );
-			// メモリ節約のため圧縮されたアセットバンドルのコンテンツをアンロード
-			bundle.Unload (false);
-			
-		} // memory is freed from the web stream (www.Dispose() gets called implicitly)
-		
-		Debug.Log(Caching.IsVersionCached(url, 1));
-		Debug.Log("DownloadAndCache end");
-	}
-*/
 	// ターゲット作成
+	void createTargetAssetBase()
+	{
+		createAssetBandle(-3, 0, 1 , "target01" , 3 , 0 );
+	}
+
 	void createTarget()
 	{
-		gm_target = new GameObject[TARGET_MAX];
-		gm_target[0] = createBase(-3, 0, 1 , "target01" , 1);
 		gm_target[1] = createBase(-1, 0, 1 , "target02" , 1);
 		gm_target[2] = createBase( 1, 0, 1 , "target03" , 1 );
 		gm_target[3] = createBase(-2,1,4, "target04" , 1);
@@ -107,7 +138,7 @@ public class s02 : MonoBehaviour {
 		gm_target[7] = createBase(-1, 2, 7 , "target08" , 2);
 		gm_target[8] = createBase(1, 2, 7 , "target09" , 2);
 
-
+		is_target_create_compleate = true;
 	}
 
 	void animTarget(int aFrameCount )
@@ -139,6 +170,16 @@ public class s02 : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+		if (is_load_compleate == false)
+			return;
+
+		// 基本バンドルターゲットを生成
+		if (is_target_create_compleate == false) {
+			createTarget ();
+			return;
+		}
+		
 		frame_count = (frame_count >= 65535) ? 0 : frame_count+1;
 		animTarget ( frame_count );
 
@@ -180,7 +221,6 @@ public class s02 : MonoBehaviour {
 		{
 			Camera.main.backgroundColor = Color.blue;
 		}
-
 	}
 
 
@@ -204,6 +244,7 @@ public class s02 : MonoBehaviour {
 
 	}
 
+	private ContentsDownloadApiModel m_downloadmodel;
 	GameObject createBase( float aX, float aY, float aZ ,string aObjName ,int aTargetType )
 	{
 		var mypos = transform.position;
@@ -215,36 +256,84 @@ public class s02 : MonoBehaviour {
 		string path = bin.getAssetPath ();
 
 		Texture tx = null;
+
 /*
 		if (path != "") {
 			string tx_path = path + "/png/kasa.png";
 			tx = bin.ReadTexture (tx_path, 10, 10);
 		}
 */
-		GameObject tg;
+		GameObject tg = null;
 		if (aTargetType == 1) {
 			tg = Instantiate (Resources.Load ("pf_target"), mypos, transform.rotation) as GameObject;
 
 			// マトオブジェクトを取り出す
 			target tg_cs = tg.GetComponent<target> ();
 			tg_cs.anim_ready ();
-			
+
 			// テクスチャを張り替える
 			GameObject tgc = tg_cs.getTargetCylinder ();
+
+			// マトオブジェクトからイベントを発行する為にイベントマネージャを登録
+			target_cylinder tgc_cs = tgc.GetComponent<target_cylinder> ();
+			tgc_cs.SetEventManager( m_target_event_manager );
+
 			
 			if (tx)
 				tgc.GetComponent<Renderer> ().material.mainTexture = tx;
 
-		} else {
-			tg = Instantiate ( Resources.Load ("target_kasa_prefab"), mypos, transform.rotation ) as GameObject;
-			tg.transform.rotation = Quaternion.FromToRotation(transform.up,transform.up);
+			tg.name = aObjName;
+		} else if (aTargetType == 2) {
+			tg = Instantiate (Resources.Load ("target_kasa_prefab"), mypos, transform.rotation) as GameObject;
+
+			// マトオブジェクトからイベントを発行する為にイベントマネージャを登録
+			TargetKasaPrefab tg_cs = tg.GetComponent<TargetKasaPrefab> ();
+			tg_cs.SetEventManager( m_target_event_manager );
+
+			tg.transform.rotation = Quaternion.FromToRotation (transform.up, transform.up);
+			tg.name = aObjName;
 		}
-
-
-		tg.name = aObjName;
 
 		return tg;
 	}
+
+	GameObject createAssetBandle( float aX, float aY, float aZ ,string aObjName ,int aTargetType, int aGmTargetNum )
+	{
+		var mypos = transform.position;
+		var addpos = new Vector3( aX, aY, aZ);
+		mypos += addpos;
+		
+		// インスタンス生成
+		BinaryAccess bin = new BinaryAccess ();
+		string path = bin.getAssetPath ();
+		
+		Texture tx = null;
+		
+		/*
+		if (path != "") {
+			string tx_path = path + "/png/kasa.png";
+			tx = bin.ReadTexture (tx_path, 10, 10);
+		}
+*/
+		GameObject tg = null;
+
+		// ダウンロード後、イベント通知に付帯する情報
+		DownloadToken token = new DownloadToken ();
+		token.Postion = mypos;
+		token.Index = aGmTargetNum;
+		token.Name = aObjName;
+
+		// ダウンロード
+		DownloadController download = new DownloadController ();
+		download.SetEventManager (m_download_event_manager);
+		download.FileName = "pf_target";
+		download.DomainName = "pshpz01.isl.gacha.fujitv.co.jp/unity/";
+		download.Token = token;
+		download.StartDownload();
+
+		return tg;
+	}
+
 
 	// Touch point 
 	//  (0,1)   (1,1)
@@ -308,45 +397,7 @@ public class s02 : MonoBehaviour {
 		return scr_position;
 	}
 
-	//　まとイベントリスナーの登録
 
-	public void SetupListeners()
-	{
-		EventManagerController.Instance.AddListener<TargetEventController> (OnHitTarget);
-		EventManagerController.Instance.AddListener<TargetKasaEventController> (OnHitKasaTarget);
-	}
-
-	public void Dispose()
-	{
-		EventManagerController.Instance.RemoveListener<TargetEventController> (OnHitTarget);
-		EventManagerController.Instance.RemoveListener<TargetKasaEventController> (OnHitKasaTarget);
-	}
-
-	public void OnHitTarget( TargetEventController aEvent )
-	{
-
-		m_score += aEvent.Score;
-		
-		GameObject txt_score_obj = GameObject.Find( "txtScore" );
-		Text txt_score = txt_score_obj.GetComponent<Text> ();
-		txt_score.text = "SCORE:"+m_score;
-
-		Debug.Log("■OnHitTarget = " + aEvent.getHash().ToString("x4"));
-	}
-
-	public void OnHitKasaTarget( TargetKasaEventController aEvent )
-	{
-		
-		m_score += aEvent.Score;
-		m_score += aEvent.Bonus;
-		
-		GameObject txt_score_obj = GameObject.Find( "txtScore" );
-		Text txt_score = txt_score_obj.GetComponent<Text> ();
-		txt_score.text = "SCORE:"+m_score;
-
-		int k = aEvent.getHash ();
-		Debug.Log("★OnHitTarget = " + aEvent.getHash().ToString("x4"));
-	}
 
 
 }
