@@ -1,17 +1,16 @@
 ﻿<Properties GitUserInfo="UsingMD">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Classes\main\controller\DownloadController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Classes\main\controller\s02.cs">
     <Files>
-      <File FileName="Assets\Classes\main\controller\EventManagerStatic.cs" Line="17" Column="3" />
-      <File FileName="c:\Users\inoue\Documents\unity_work\demo01\Assets\Classes\main\model\ContentsDownloadApiModel.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\s02.cs" Line="45" Column="2" />
-      <File FileName="Assets\Classes\main\controller\DownloadController.cs" Line="84" Column="2" />
-      <File FileName="Assets\Classes\main\controller\EventManagerDynamic.cs" Line="23" Column="20" />
-      <File FileName="Assets\Classes\main\controller\GameMainController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\DownloadEventController.cs" Line="4" Column="37" />
-      <File FileName="Assets\Classes\main\controller\TargetEventController.cs" Line="8" Column="3" />
-      <File FileName="Assets\Classes\main\controller\TargetKasaPrefab.cs" Line="35" Column="1" />
-      <File FileName="Assets\Classes\main\controller\target_cylinder.cs" Line="18" Column="4" />
+      <File FileName="demo01.sln" Line="1" Column="1" />
+      <File FileName="Assets\Classes\main\controller\DownloadEventController.cs" Line="15" Column="2" />
+      <File FileName="Assets\Classes\main\controller\GameMainController.cs" Line="23" Column="3" />
+      <File FileName="Assets\Classes\main\controller\DownloadController.cs" Line="97" Column="27" />
+      <File FileName="Assets\Classes\main\controller\EventManagerDynamic.cs" Line="27" Column="2" />
+      <File FileName="Assets\Classes\main\model\ContentsDownloadApiModel.cs" Line="1" Column="1" />
+      <File FileName="Assets\Classes\main\controller\s02.cs" Line="289" Column="83" />
+      <File FileName="Assets\Classes\main\controller\target_cylinder.cs" Line="1" Column="1" />
+      <File FileName="Assets\Classes\main\controller\TargetEventController.cs" Line="15" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

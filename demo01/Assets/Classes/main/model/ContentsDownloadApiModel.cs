@@ -6,27 +6,55 @@ using System.IO;
 
 public class ContentInformation
 {
-	private string m_file_name = null;
-	public string Filename {
-		get { return m_file_name;	}
-		set { m_file_name = value;	}
-	}
-
+	// ダウンロードステータス
 	private ContentsDownloadApiModel.enmDownloadStatus m_download_status = 0;
 	public ContentsDownloadApiModel.enmDownloadStatus Download_Status {
 		get { return m_download_status;	}
 		set { m_download_status = value;}
 	}
-
-	private int m_content_type = 0;
-	public int Content_Type {
+	//ファイル名
+	private string m_file_name = null;
+	public string File_Name {
+		get { return m_file_name;	}
+		set { m_file_name = value;	}
+	}
+	// コンテンツタイプ
+	private ContentsDownloadApiModel.enmDownloadContentType m_content_type = 0;
+	public ContentsDownloadApiModel.enmDownloadContentType Content_Type {
 		get { return m_content_type;	}
 		set { m_content_type = value;	}
 	}
+	// バージョン
+	private int m_content_version = 0;
+	public int Version{
+		get { return m_content_version;	}
+		set { m_content_version = value;	}
+	}
 
-	public ContentInformation( string aFileName )
+	private UnityEngine.Object m_unity_object = null;
+	public UnityEngine.Object UnityObjectData {
+		get { return m_unity_object;	}
+		set { m_unity_object = value;	}
+	}
+
+	// オーディオデータ
+	public AudioClip AudioData {
+		get { return m_unity_object as AudioClip;	}
+	}
+
+	// ゲームオブジェクト
+	public GameObject GameObjectData {
+		get { return m_unity_object as GameObject;	}
+	}
+	// テキスト
+	public TextAsset TextData2{
+		get { return m_unity_object as TextAsset; }
+	}
+
+	public ContentInformation( string aFileName , int aVersion )
 	{
 		m_file_name = aFileName;
+		m_content_version = aVersion;
 	}
 }
 
@@ -41,31 +69,15 @@ public class ContentsDownloadApiModel : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if ( IsCompleateDownload() ) {
-			on_compleat (req_contents);
-			req_contents.Clear();
+			on_compleat (m_req_contents);
+			m_req_contents.Clear();
 		}
 	}
 
 	string m_url = "pshpz01.isl.gacha.fujitv.co.jp/unity/";
-
-	private GameObject m_gameobject = null;
-	public GameObject GameObjectData {
-		get { return m_gameobject;	}
-	}
-
-	private AudioClip m_audio = null;
-	public AudioClip AudioData {
-		get { return m_audio;	}
-	}
-
-	private Texture2D m_texture = null;
-	public Texture2D TextureData {
-		get { return m_texture;	}
-	}
-
 	public enum enmDownloadStatus
 	{
-		WAITING_FOR_START,
+		WAITING_FOR_START = 0,
 		DOWNLOADING,
 		COMPLETE,
 		ERROR_EXIT,
@@ -74,19 +86,20 @@ public class ContentsDownloadApiModel : MonoBehaviour {
 
 	public enum enmDownloadContentType
 	{
-		UNKNOWN,
+		UNKNOWN = 0,
 		TEXTURE,
 		GAMEOBJECT,
 		AUDIO,
+		TEXT,
 		ENTRY_MAX
 	}
 
-	private enmDownloadContentType m_download_content_type;
+	private enmDownloadContentType m_download_content_type = enmDownloadContentType.UNKNOWN;
 	public enmDownloadContentType DownloadContentType {
 		get { return m_download_content_type; }
 	}
 
-	private enmDownloadStatus m_download_status;
+	private enmDownloadStatus m_download_status = enmDownloadStatus.WAITING_FOR_START;
 	public enmDownloadStatus DownloadStatus
 	{
 		get{ return m_download_status; }
@@ -96,12 +109,27 @@ public class ContentsDownloadApiModel : MonoBehaviour {
 	public OnComplete on_compleat = null;
 	public bool m_is_req_download = false;
 
-	private List<ContentInformation> req_contents = new List<ContentInformation>();
+	private List<ContentInformation> m_req_contents = new List<ContentInformation>();
 
-	public void RequestDownloadFiles( List<string> aFileNameList )
+	private int m_read_thread_count = 1;
+	public int ReadThreadCount {
+		get { return m_read_thread_count;	}
+		set { m_read_thread_count = value; }
+	}
+
+	public void RequestDownloadFiles( List<ContentInformation> aReqDownloadList )
 	{
-		foreach( string file_name in aFileNameList ){
-			GetAssetBandle( file_name );
+		int count = 0;
+		foreach( ContentInformation m_req_contents in aReqDownloadList )
+		{
+			if( m_req_contents.Download_Status != enmDownloadStatus.WAITING_FOR_START )
+				continue;
+
+			if( m_read_thread_count > aReqDownloadList.Count )
+				continue;
+
+			GetAssetBandle( m_req_contents.File_Name , m_req_contents.Version );
+			count++;
 		}
 	}
 
@@ -110,10 +138,10 @@ public class ContentsDownloadApiModel : MonoBehaviour {
 	/// 既にキャッシュがあればそちらから取り出す。
 	/// </summary>
 	/// <param name="aDownloadFileName">A download file name.</param>
-	public void GetAssetBandle( string aDownloadFileName )
+	private void GetAssetBandle( string aDownloadFileName , int aVersion)
 	{
-
-		req_contents.Add( new ContentInformation(aDownloadFileName));
+		ContentInformation content_info = new ContentInformation( aDownloadFileName , aVersion );
+		m_req_contents.Add( content_info );
 
 		// Clear Cache
 		Caching.CleanCache();
@@ -124,69 +152,88 @@ public class ContentsDownloadApiModel : MonoBehaviour {
 #elif UNITY_IPHONE  && !UNITY_EDITOR
 		string url = "http://" + this.m_url + aDownloadFileName + ".unity3d.iphone.unity3d?dl=1";
 #else
-		string url = "http://" + this.m_url + aDownloadFileName + ".unity3d.unity3d?dl=1";
+		string url = "http://" + this.m_url + aDownloadFileName + ".unity3d.unity3d?dl=2";
 #endif
-		Debug.Log ("Download URL=" + url);
 
-		StartCoroutine ( DownloadAndCache( aDownloadFileName, url, 0 ) );
+		StartCoroutine ( DownloadAndCache( content_info, url, 0 ) );
 
 	}
 
-	private IEnumerator DownloadAndCache (string aAssetName, string aUrl, int aVersion)
+	private IEnumerator DownloadAndCache ( ContentInformation aContentInformation, string aUrl, int aVersion)
 	{
 
 		// キャッシュシステムの準備が完了するのを待ちます
 		while (!Caching.ready)
 			yield return null;
 
-		SetDownloadStatus ( aAssetName, enmDownloadStatus.DOWNLOADING);
+		SetDownloadStatus ( aContentInformation.File_Name, enmDownloadStatus.DOWNLOADING);
 
 		// 同じバージョンが存在する場合はアセットバンドルをキャッシュからロードする
 		// またはダウンロードしてキャッシュに格納します。
 		using (WWW w3 = WWW.LoadFromCacheOrDownload(aUrl, aVersion) )
 		{
-			foreach (ContentInformation req in req_contents) {
-				if( req.Filename == aAssetName )
+			// ファイル名でオブジェクト配列を検索
+			int req_idx = -1;
+			foreach (ContentInformation req in m_req_contents) {
+				if( req.File_Name == aContentInformation.File_Name )
+				{
 					req.Download_Status = enmDownloadStatus.DOWNLOADING;
+					req_idx = m_req_contents.IndexOf( req );
+					break;
+				}
 			}
+
+			if( req_idx <= -1 )
+				throw new Exception ("ダウンロード対象でない:" + w3.error);
 
 			yield return w3;
 
 			if ( w3.error != null ) {
-				SetDownloadStatus (aAssetName, enmDownloadStatus.ERROR_EXIT);
+				SetDownloadStatus (aContentInformation.File_Name, enmDownloadStatus.ERROR_EXIT);
 				throw new Exception ("WWWダウンロードにエラーがありました:" + w3.error);
 			}
 			else
 			{
-				if (aUrl.IndexOf("texture") > -1) {
+				m_req_contents[req_idx].UnityObjectData = w3.assetBundle.mainAsset;
+				if (aUrl.IndexOf("texture") > -1)
+				{
 					//画像
-					m_texture = w3.assetBundle.mainAsset as Texture2D;
-					m_download_content_type = enmDownloadContentType.TEXTURE;
-				} else if (aUrl.IndexOf("3d") > -1) {
-					//3Dデータ
-					m_gameobject = Instantiate(w3.assetBundle.mainAsset) as GameObject;
-					m_download_content_type = enmDownloadContentType.GAMEOBJECT;
-				} else if (aUrl.IndexOf("audio") > -1) {
-					//サウンド
-					m_audio = w3.assetBundle.mainAsset as AudioClip;
-					m_download_content_type = enmDownloadContentType.AUDIO;
+					m_req_contents[req_idx].Content_Type = enmDownloadContentType.TEXTURE;
+
 				}
+				else if (aUrl.IndexOf("3d") > -1)
+				{
+					//3Dデータ
+					m_req_contents[req_idx].Content_Type = enmDownloadContentType.GAMEOBJECT;
+				}
+				else if (aUrl.IndexOf("audio") > -1)
+				{
+					//サウンド
+					m_req_contents[req_idx].Content_Type = enmDownloadContentType.AUDIO;
+				}
+				else if (aUrl.IndexOf("text") > -1 )
+				{
+					// テキスト
+					m_req_contents[req_idx].Content_Type = enmDownloadContentType.TEXT;
+				}
+				else
+				{
+					// 不明なコンテンツ
+					m_req_contents[req_idx].Content_Type = enmDownloadContentType.UNKNOWN;
+				}
+
 			}
 
-			SetDownloadStatus (aAssetName, enmDownloadStatus.COMPLETE);
+			SetDownloadStatus (aContentInformation.File_Name, enmDownloadStatus.COMPLETE);
 
 		}
-
 		yield return null;
-
-		Debug.Log(Caching.IsVersionCached(aUrl, 1));
-		Debug.Log("DownloadAndCache end");
 	}
 
 	public void SetDownloadStatus( string aAssetName , enmDownloadStatus aStatus )
 	{
-		foreach (ContentInformation req in req_contents) {
-			if( req.Filename == aAssetName )
+		foreach (ContentInformation req in m_req_contents) {
+			if( req.File_Name == aAssetName )
 				req.Download_Status = aStatus;
 		}
 	}
@@ -195,13 +242,13 @@ public class ContentsDownloadApiModel : MonoBehaviour {
 	{
 		bool ret = false;
 
-		foreach (ContentInformation req in req_contents) {
+		foreach (ContentInformation req in m_req_contents) {
 			if( req.Download_Status == enmDownloadStatus.WAITING_FOR_START ||
 				req.Download_Status == enmDownloadStatus.DOWNLOADING )
 				return false;
 			else if( req.Download_Status == enmDownloadStatus.COMPLETE ||
 					 req.Download_Status == enmDownloadStatus.ERROR_EXIT )
-					ret = true;
+				ret = true;
 		}
 
 		return ret;

@@ -32,12 +32,7 @@ public class GameMainController : MonoBehaviour {
 	// クリック時に呼び出されるようにインスペクタで設定される
 	public void OnClickGameStart()
 	{
-/*
-		DownloadController download = new DownloadController ();
-		download.FileName = "pf_target";
-		download.DomainName = "pshpz01.isl.gacha.fujitv.co.jp/unity/";
-		download.StartDownload();
-*/
+
 		Application.LoadLevel ( "s02" );
 	}
 
@@ -45,32 +40,7 @@ public class GameMainController : MonoBehaviour {
 	{
 		int a;
 		a = 1;
-/*
-		DownloadController download = new DownloadController ();
+	}
 
-		download.FileName = "pf_target";
-		download.DomainName = "pshpz01.isl.gacha.fujitv.co.jp/unity/";
-
-		download.StartDownload();
-*/
-	}
-/*
-	//　ダウンロードイベントリスナーの登録
-	public void SetupListeners()
-	{
-		EventManagerController.Instance.AddListener<DownloadEventController> (OnCompleateDownload);
-	}
-	
-	public void Dispose()
-	{
-		EventManagerController.Instance.RemoveListener<DownloadEventController> (OnCompleateDownload);
-	}
-	
-	public void OnCompleateDownload( DownloadEventController aEvent )
-	{
-
-		Debug.Log ("downloaded. path=" + aEvent.getLocalFilePath());
-	}
-*/
 
 }

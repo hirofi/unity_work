@@ -36,36 +36,12 @@ public class s02 : MonoBehaviour {
 	public EventManagerDynamic m_download_event_manager = null;
 	public EventManagerDynamic m_target_event_manager = null;
 
+	/// --------------
+	/// マト関連
+	/// --------------
 
-	void createDownloadEventManager()
-	{
-		m_download_event_manager = new EventManagerDynamic ();
-		m_download_event_manager.AddListener<DownloadEventController> (OnCompleateDownload);
-	}
-
-	public void OnCompleateDownload( DownloadEventController aEvent )
-	{
-
-		gm_target[ aEvent.Token.Index ] = aEvent.GameobjectData;
-		gm_target[aEvent.Token.Index].name = aEvent.Token.Name;
-		gm_target[aEvent.Token.Index].transform.position = aEvent.Token.Postion;
-
-		is_load_compleate = true;
-
-		// マトオブジェクトを取り出す
-		target tg_cs = gm_target[ aEvent.Token.Index ].GetComponent<target> ();
-		tg_cs.anim_ready ();
-		
-		// テクスチャを張り替える
-		GameObject tgc = tg_cs.getTargetCylinder ();
-		
-		// マトオブジェクトからイベントを発行する為にイベントマネージャを登録
-		target_cylinder tgc_cs = tgc.GetComponent<target_cylinder> ();
-		tgc_cs.SetEventManager( m_target_event_manager );
-
-		Debug.Log ("downloaded. path=" + aEvent.getLocalFilePath());
-	}
-
+	// 1).
+	// マトイベントマネージャを生成し、ヒット時のターゲットを登録する
 	void createTargetEventManager()
 	{
 		m_target_event_manager = new EventManagerDynamic ();
@@ -73,6 +49,8 @@ public class s02 : MonoBehaviour {
 		m_target_event_manager.AddListener<TargetKasaEventController> (OnHitKasaTarget);
 	}
 
+	// 2).
+	// マト１ヒットイベント
 	public void OnHitTarget( TargetEventController aEvent )
 	{
 		
@@ -84,7 +62,8 @@ public class s02 : MonoBehaviour {
 		
 		Debug.Log("■OnHitTarget = " + aEvent.getHash().ToString("x4"));
 	}
-	
+
+	// マト２ヒットイベント
 	public void OnHitKasaTarget( TargetKasaEventController aEvent )
 	{
 		
@@ -108,8 +87,6 @@ public class s02 : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-//		SetupListeners ();
-//		SetupDownloadListeners ();
 		createDownloadEventManager ();
 		createTargetEventManager ();
 
@@ -118,27 +95,45 @@ public class s02 : MonoBehaviour {
 
 		gm_ball = new GameObject[BALL_MAX];
 
-
 	}
-
-	// ターゲット作成
-	void createTargetAssetBase()
-	{
-		createAssetBandle(-3, 0, 1 , "target01" , 3 , 0 );
-	}
-
+	
 	void createTarget()
 	{
-		gm_target[1] = createBase(-1, 0, 1 , "target02" , 1);
-		gm_target[2] = createBase( 1, 0, 1 , "target03" , 1 );
-		gm_target[3] = createBase(-2,1,4, "target04" , 1);
-		gm_target[4] = createBase(0, 1,4, "target05" , 1);
-		gm_target[5] = createBase(2, 1, 4 , "target06" , 1);
-		gm_target[6] = createBase(-3, 2, 7 , "target07" , 2);
-		gm_target[7] = createBase(-1, 2, 7 , "target08" , 2);
-		gm_target[8] = createBase(1, 2, 7 , "target09" , 2);
 
-		is_target_create_compleate = true;
+		// マトオブジェクトを取り出す
+		target tg_cs = gm_target[0].GetComponent<target> ();
+		tg_cs.anim_ready ();
+
+		// テクスチャを張り替える
+		GameObject tgc = tg_cs.getTargetCylinder ();
+		
+		if (tgc) {
+			// マトオブジェクトからイベントを発行する為にイベントマネージャを登録
+			target_cylinder tgc_cs = tgc.GetComponent<target_cylinder> ();
+			tgc_cs.SetEventManager (m_target_event_manager);
+		}
+
+		if(!gm_target[1])
+			gm_target[1] = createBase(-1, 0, 1 , "target02" , 1);
+		if(!gm_target[2])
+			gm_target[2] = createBase( 1, 0, 1 , "target03" , 1 );
+		if(!gm_target[3])
+			gm_target[3] = createBase(-2,1,4, "target04" , 1);
+		if(!gm_target[4])
+			gm_target[4] = createBase(0, 1,4, "target05" , 1);
+
+		if(!gm_target[5])
+			gm_target[5] = createBase(2, 1, 4 , "target06" , 1);
+
+		if(!gm_target[6])
+			gm_target[6] = createBase(-3, 2, 7 , "target07" , 2);
+
+		if(!gm_target[7])
+			gm_target[7] = createBase(-1, 2, 7 , "target08" , 2);
+
+		if(!gm_target[8])
+			gm_target[8] = createBase(1, 2, 7 , "target09" , 2);
+
 	}
 
 	void animTarget(int aFrameCount )
@@ -175,18 +170,19 @@ public class s02 : MonoBehaviour {
 			return;
 
 		// 基本バンドルターゲットを生成
-		if (is_target_create_compleate == false) {
+		if (is_target_create_compleate == false)
+		{
 			createTarget ();
-			return;
+			is_target_create_compleate = true;
 		}
-		
+
 		frame_count = (frame_count >= 65535) ? 0 : frame_count+1;
 		animTarget ( frame_count );
 
 		this.checkMoouseButton();
 		this.checkTach();
 
-//		this.moveTarget(1);
+		this.moveTarget(1);
 
 	}
 
@@ -297,6 +293,59 @@ public class s02 : MonoBehaviour {
 		return tg;
 	}
 
+	/// --------------
+	/// ダウンロード関連
+	/// --------------
+
+	// 1).
+	// ダウンロード用のイベントマネージャを生成し、完了時関数を登録する。
+	void createDownloadEventManager()
+	{
+		m_download_event_manager = new EventManagerDynamic ();
+		m_download_event_manager.AddListener<DownloadEventController> (OnCompleateDownload);
+	}
+
+	// 2).
+	// ダウンロード完了時に呼び出されるメソッド
+	public void OnCompleateDownload( DownloadEventController aEvent )
+	{
+		if (aEvent.Content.Download_Status == ContentsDownloadApiModel.enmDownloadStatus.ERROR_EXIT) {
+			Debug.Log("エラー : ");
+			return;
+		}
+		gm_target[ aEvent.Token.Index ] = Instantiate( aEvent.Content.GameObjectData );
+		gm_target[aEvent.Token.Index].name = aEvent.Token.Name;
+		gm_target[aEvent.Token.Index].transform.position = aEvent.Token.Postion;
+	
+		// マトオブジェクトを取り出す
+		target tg_cs = gm_target[ aEvent.Token.Index ].GetComponent<target> ();
+		tg_cs.anim_ready ();
+
+		// テクスチャを張り替えてみる
+		GameObject tgc = tg_cs.getTargetCylinder ();
+		if(tgc)
+		{
+			// マトオブジェクトからイベントを発行する為にイベントマネージャを登録
+			target_cylinder tgc_cs = tgc.GetComponent<target_cylinder> ();
+			tgc_cs.SetEventManager( m_target_event_manager );
+
+			if ( aEvent.Token.Textuer )
+				tgc.GetComponent<Renderer> ().material.mainTexture = aEvent.Token.Textuer;
+		}
+
+
+		is_load_compleate = true;
+		Debug.Log ("downloaded. path=" + aEvent.getLocalFilePath());
+	}
+
+	// 3).
+	// ダウンロード後のターゲット作成
+	void createTargetAssetBase()
+	{
+		createAssetBandle(-3, 0, 1 , "target01" , 3 , 0 );
+	}
+
+	// アセットバンドルをダウンロードする
 	GameObject createAssetBandle( float aX, float aY, float aZ ,string aObjName ,int aTargetType, int aGmTargetNum )
 	{
 		var mypos = transform.position;
@@ -306,22 +355,18 @@ public class s02 : MonoBehaviour {
 		// インスタンス生成
 		BinaryAccess bin = new BinaryAccess ();
 		string path = bin.getAssetPath ();
-		
-		Texture tx = null;
-		
-		/*
-		if (path != "") {
-			string tx_path = path + "/png/kasa.png";
-			tx = bin.ReadTexture (tx_path, 10, 10);
-		}
-*/
+
 		GameObject tg = null;
 
-		// ダウンロード後、イベント通知に付帯する情報
+		// トークンを生成（ダウンロード後、イベント通知に付帯する情報）
 		DownloadToken token = new DownloadToken ();
 		token.Postion = mypos;
 		token.Index = aGmTargetNum;
 		token.Name = aObjName;
+		if (path != "") {
+			string tx_path = path + "/png/kasa.png";
+			token.Textuer = bin.ReadTexture (tx_path, 10, 10);
+		}
 
 		// ダウンロード
 		DownloadController download = new DownloadController ();
@@ -333,6 +378,8 @@ public class s02 : MonoBehaviour {
 
 		return tg;
 	}
+
+
 
 
 	// Touch point 

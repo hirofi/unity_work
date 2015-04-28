@@ -23,6 +23,11 @@ public class DownloadToken
 		set { m_name = value;	}
 	}
 
+	private Texture m_texture;
+	public Texture Textuer{
+		get { return m_texture; 	}
+		set { m_texture = value;	}
+	}
 }
 
 public class DownloadController {
@@ -60,9 +65,10 @@ public class DownloadController {
 
 		try
 		{
+
 			// ダウンロードするファイル名をリスト化しリクエストする。
-			var downloadlist = new List<string>();
-			downloadlist.Add(this.m_file_name);
+			var downloadlist = new List<ContentInformation>();
+			downloadlist.Add( new ContentInformation(this.m_file_name,0) );
 
 			// ContentsDownloadApiModelクラスは MonoBehaviour を継承しているので
 			// new ではなく GameObject に AddComponet して生成する。。。 unity お作法により 
@@ -85,13 +91,15 @@ public class DownloadController {
 	// ダウンロードが終了したいらイベントマネージャに通知(イベントキュー)
 	private void OnDownloadCompleate( List<ContentInformation>aContentInformation )
 	{
-		DownloadEventController download_event = new DownloadEventController (this.m_file_name);
-		download_event.Token = m_token;
-		download_event.TextureData = m_downloadmodel.TextureData;
-		download_event.GameobjectData = m_downloadmodel.GameObjectData;
-		download_event.AudioData = m_downloadmodel.AudioData;
 
-		m_event_manager.TriggerEvent (download_event);
+		foreach (ContentInformation content in aContentInformation)
+		{
+			DownloadEventController download_event = new DownloadEventController ( content.File_Name );
+			download_event.Token = m_token;
+			download_event.Content = content;
+
+			m_event_manager.TriggerEvent (download_event);
+		}
 	}
 
 }

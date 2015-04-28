@@ -31,28 +31,11 @@ public class DownloadEventController : GameEventDynamic {
 		set { m_www = value;	}
 	}
 
-	private GameObject m_game_object;
-	public GameObject Game_Object {
-		get { return m_game_object;	}
-		set { m_game_object = value;	}
-	}
-
-	private Texture2D m_texture = null;
-	public Texture2D TextureData {
-		get { return m_texture;	}
-		set { m_texture = value;	}
-	}
-
-	private GameObject m_gameobject = null;
-	public GameObject GameobjectData {
-		get { return m_gameobject;	}
-		set { m_gameobject = value;	}
-	}
-
-	private AudioClip m_audio = null;
-	public AudioClip AudioData {
-		get { return m_audio;	}
-		set { m_audio = value;	}
+	private ContentInformation m_content;
+	public ContentInformation Content
+	{
+		get { return m_content;	}
+		set { m_content = value;}
 	}
 
 	private DownloadToken m_token = null;

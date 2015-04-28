@@ -31,21 +31,30 @@ public class target : MonoBehaviour {
 
 	private HingeJoint getHingeJoint()
 	{
-		var obj_path = "/" + this.name + "/base_x1"; 
-		return GameObject.Find (obj_path).GetComponent<HingeJoint> ();
+		var obj_path = "/" + this.name + "/base_x1";
+		GameObject go = GameObject.Find (obj_path);
+
+		if (go) {
+			return go.GetComponent<HingeJoint>();
+		}
+
+		return null;
+//		return GameObject.Find (obj_path).GetComponent<HingeJoint> ();
 	}
 
 	// アニメーションを初期状態にする
 	public void anim_ready()
 	{
-		getHingeJoint().useSpring = false;
+		if(getHingeJoint())
+			getHingeJoint().useSpring = false;
 	}
 
 	// 開始
 	public void anim_start()
 	{
 		// ヒンジのスプリングを有効にし、値をセット
-		getHingeJoint ().useSpring = true;
+		if(getHingeJoint())
+			getHingeJoint ().useSpring = true;
 	}
 
 	// 的のステータスを取得
