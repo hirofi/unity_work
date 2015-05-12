@@ -1,20 +1,23 @@
 ﻿<Properties GitUserInfo="UsingMD">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Classes\main\controller\s02.cs">
+  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workbench ActiveDocument="..\cube\Assets\Classes\main\controller\DownloadController.cs">
     <Files>
-      <File FileName="demo01.sln" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\DownloadEventController.cs" Line="15" Column="2" />
-      <File FileName="Assets\Classes\main\controller\GameMainController.cs" Line="23" Column="3" />
-      <File FileName="Assets\Classes\main\controller\DownloadController.cs" Line="97" Column="27" />
-      <File FileName="Assets\Classes\main\controller\EventManagerDynamic.cs" Line="27" Column="2" />
-      <File FileName="Assets\Classes\main\model\ContentsDownloadApiModel.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\s02.cs" Line="289" Column="83" />
-      <File FileName="Assets\Classes\main\controller\target_cylinder.cs" Line="1" Column="1" />
-      <File FileName="Assets\Classes\main\controller\TargetEventController.cs" Line="15" Column="3" />
+      <File FileName="..\cube\Assets\Classes\main\controller\MainController.cs" Line="152" Column="1" />
+      <File FileName="..\cube\Assets\Classes\main\controller\DownloadController.cs" Line="133" Column="4" />
+      <File FileName="..\cube\Assets\Classes\main\controller\DownloadEventController.cs" Line="11" Column="20" />
+      <File FileName="..\cube\Assets\Classes\main\model\ContentsDownloadModel.cs" Line="146" Column="21" />
+      <File FileName="..\cube\Assets\Classes\libs\EventManagerDynamic.cs" Line="106" Column="2" />
+      <File FileName="..\cube\Assets\Classes\libs\EventManagerStatic.cs" Line="46" Column="39" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="C:\Users\inoue\Documents\unity_work\cube\Assets\Classes\main\controller\MainController.cs" line="217" />
+      <Breakpoint file="C:\Users\inoue\Documents\unity_work\cube\Assets\Classes\main\model\ContentsDownloadModel.cs" line="181" />
+      <Breakpoint file="C:\Users\inoue\Documents\unity_work\cube\Assets\Classes\main\controller\DownloadController.cs" line="108" />
+      <Breakpoint file="C:\Users\inoue\Documents\unity_work\cube\Assets\Classes\main\controller\MainController.cs" line="195" />
+      <Breakpoint file="C:\Users\inoue\Documents\unity_work\cube\Assets\Classes\main\controller\MainController.cs" line="172" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

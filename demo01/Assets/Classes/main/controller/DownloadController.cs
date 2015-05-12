@@ -59,7 +59,7 @@ public class DownloadController {
 		m_event_manager = aEventManager;
 	}
 
-	private ContentsDownloadApiModel m_downloadmodel;
+	private ContentsDownloadModel m_downloadmodel;
 	public void StartDownload()
 	{
 
@@ -73,7 +73,7 @@ public class DownloadController {
 			// ContentsDownloadApiModelクラスは MonoBehaviour を継承しているので
 			// new ではなく GameObject に AddComponet して生成する。。。 unity お作法により 
 			GameObject emptyGameObject = new GameObject();
-			m_downloadmodel = emptyGameObject.AddComponent<ContentsDownloadApiModel> ();
+			m_downloadmodel = emptyGameObject.AddComponent<ContentsDownloadModel> ();
 			m_downloadmodel.RequestDownloadFiles(downloadlist);
 			m_downloadmodel.on_compleat = this.OnDownloadCompleate;
 		}

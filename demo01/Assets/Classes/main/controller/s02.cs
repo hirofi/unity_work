@@ -99,20 +99,20 @@ public class s02 : MonoBehaviour {
 	
 	void createTarget()
 	{
+		if (gm_target [0]) {
+			// マトオブジェクトを取り出す
+			target tg_cs = gm_target [0].GetComponent<target> ();
+			tg_cs.anim_ready ();
 
-		// マトオブジェクトを取り出す
-		target tg_cs = gm_target[0].GetComponent<target> ();
-		tg_cs.anim_ready ();
-
-		// テクスチャを張り替える
-		GameObject tgc = tg_cs.getTargetCylinder ();
+			// テクスチャを張り替える
+			GameObject tgc = tg_cs.getTargetCylinder ();
 		
-		if (tgc) {
-			// マトオブジェクトからイベントを発行する為にイベントマネージャを登録
-			target_cylinder tgc_cs = tgc.GetComponent<target_cylinder> ();
-			tgc_cs.SetEventManager (m_target_event_manager);
+			if (tgc) {
+				// マトオブジェクトからイベントを発行する為にイベントマネージャを登録
+				target_cylinder tgc_cs = tgc.GetComponent<target_cylinder> ();
+				tgc_cs.SetEventManager (m_target_event_manager);
+			}
 		}
-
 		if(!gm_target[1])
 			gm_target[1] = createBase(-1, 0, 1 , "target02" , 1);
 		if(!gm_target[2])
@@ -143,21 +143,31 @@ public class s02 : MonoBehaviour {
 
 		if ( aFrameCount == 5 )
 		{
-			gm_target [0].GetComponent<target> ().anim_start ();
-			gm_target [3].GetComponent<target> ().anim_start ();
-			gm_target [6].GetComponent<TargetKasaPrefab> ().anim_start ();
+			if(gm_target [0])
+				gm_target [0].GetComponent<target> ().anim_start ();
+			if(gm_target [3])
+				gm_target [3].GetComponent<target> ().anim_start ();
+			if(gm_target [6])
+				gm_target [6].GetComponent<TargetKasaPrefab> ().anim_start ();
 		}
 		if ( aFrameCount == 10 )
 		{
-			gm_target [1].GetComponent<target> ().anim_start ();
-			gm_target [4].GetComponent<target> ().anim_start ();
-			gm_target [7].GetComponent<TargetKasaPrefab> ().anim_start ();
+			if(gm_target [1])
+				gm_target [1].GetComponent<target> ().anim_start ();
+			if(gm_target [4])
+				gm_target [4].GetComponent<target> ().anim_start ();
+			if(gm_target [7])
+				gm_target [7].GetComponent<TargetKasaPrefab> ().anim_start ();
 		}
 		if ( aFrameCount == 15 )
 		{
-			gm_target [2].GetComponent<target> ().anim_start ();
-			gm_target [5].GetComponent<target> ().anim_start ();
-			gm_target [8].GetComponent<TargetKasaPrefab> ().anim_start ();
+
+			if(gm_target [2])
+				gm_target [2].GetComponent<target> ().anim_start ();
+			if(gm_target [5])
+				gm_target [5].GetComponent<target> ().anim_start ();
+			if(gm_target [8])
+				gm_target [8].GetComponent<TargetKasaPrefab> ().anim_start ();
 			is_already_start = true;
 		}
 	}
@@ -231,16 +241,18 @@ public class s02 : MonoBehaviour {
 
 		float mv = MOVE_STEP * move_axis;
 		for (int i=0; i<3; i++) {
-			this.gm_target[i].transform.Translate( mv, 0, 0 );
+			if( gm_target[i] )
+				gm_target[i].transform.Translate( mv, 0, 0 );
 		}
 
 		for (int i=3; i<6; i++) {
-			this.gm_target[i].transform.Translate( mv*-1, 0, 0 );
+			if( gm_target[i] )
+				gm_target[i].transform.Translate( mv*-1, 0, 0 );
 		}
 
 	}
 
-	private ContentsDownloadApiModel m_downloadmodel;
+	private ContentsDownloadModel m_downloadmodel;
 	GameObject createBase( float aX, float aY, float aZ ,string aObjName ,int aTargetType )
 	{
 		var mypos = transform.position;
@@ -309,7 +321,8 @@ public class s02 : MonoBehaviour {
 	// ダウンロード完了時に呼び出されるメソッド
 	public void OnCompleateDownload( DownloadEventController aEvent )
 	{
-		if (aEvent.Content.Download_Status == ContentsDownloadApiModel.enmDownloadStatus.ERROR_EXIT) {
+		if (aEvent.Content.Download_Status == ContentsDownloadModel.enmDownloadStatus.ERROR_EXIT) {
+			is_load_compleate = true;
 			Debug.Log("エラー : ");
 			return;
 		}
