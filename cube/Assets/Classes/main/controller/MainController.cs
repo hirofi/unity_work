@@ -209,14 +209,10 @@ public class MainController : MonoBehaviour {
 	// -------------
 	void DoDownloadList()
 	{
-		m_list_download_event_manager = new EventManagerDynamic ();
-		m_list_download_event_manager.AddListener<DownloadEventController> (OnCompleateListDownload);
-		
 		m_list_down_load = new DownloadController ();
-		
+		m_list_down_load.AddListener<DownloadEventController>(OnCompleateListDownload);
 		m_list_down_load.p_DomainName = "http://210.140.154.119:82/ab/";
 		m_list_down_load.p_FileName = "dllist.txt";
-		m_list_down_load.SetEventManager (m_list_download_event_manager);
 		m_list_down_load.StartDownload ();
 	}
 
@@ -256,25 +252,14 @@ public class MainController : MonoBehaviour {
 	// -------------
 	void DoDownloadAsset( string[] aFileNameList )
 	{
-		// イベントマネージャを生成し、リスナー登録する
-		m_download_event_manager = new EventManagerDynamic ();
-		m_download_event_manager.AddListener<DownloadEventController> (OnCompleateAssetDownload);
-		
 		m_down_load = new DownloadController ();
-		
-		if (m_down_load.p_DownloadList == null)
-			m_down_load.p_DownloadList = new List<ContentInformation> ();
-		else
-			m_down_load.p_DownloadList.Clear ();
-		
+		m_down_load.AddListener<DownloadEventController> (OnCompleateAssetDownload);
+		m_down_load.p_DownloadList = new List<ContentInformation> ();
+
 		foreach (string file_name in aFileNameList)
 			m_down_load.p_DownloadList.Add (new ContentInformation (file_name, 0));
 
 		m_down_load.p_DomainName = "http://210.140.154.119:82/ab/";
-
-		// ダウンロードコントローラでイベントを発行できるようにする為、
-		// 生成したイベントマネージャを登録する
-		m_down_load.SetEventManager (m_download_event_manager);
 	}
 
 	// -------------

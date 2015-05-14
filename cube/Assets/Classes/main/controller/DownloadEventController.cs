@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 
 public class DownloadEventController : GameEventDynamic {
-
-
+	
 	public enum enmDownloadStatus
 	{
 		LOCAL_FILE_NOT_EXIST = 0,
@@ -53,4 +52,5 @@ public class DownloadEventController : GameEventDynamic {
 	{
 		this.m_req_contents = aRequestContents;
 	}
+
 }

@@ -30,11 +30,9 @@ public class DownloadToken
 	}
 }
 
-public class DownloadController {
+public class DownloadController : EventManagerDynamic {
 
 	const string DEFAULT_DOMAIN = "http://210.140.154.119:82/ab/";
-
-	private EventManagerDynamic m_event_manager;
 
 	private string m_file_name;
 	public string p_FileName {
@@ -61,12 +59,6 @@ public class DownloadController {
 	}
 
 	private DownloadEventController.enmDownloadFileType m_download_file_type;
-
-	// ダウンロードステータス通知の為にイベントマネージャを登録
-	public void SetEventManager( EventManagerDynamic aEventManager )
-	{
-		m_event_manager = aEventManager;
-	}
 
 	private ContentsDownloadModel m_downloadmodel;
 	public void StartDownload()
@@ -144,7 +136,8 @@ public class DownloadController {
 
 		DownloadEventController download_event = new DownloadEventController ( aContentInformation );
 		download_event.p_DownloadFileType = m_download_file_type;
-		m_event_manager.TriggerEvent (download_event);
+
+		TriggerEvent (download_event);
 
 		// ダウンロードリクエスト対象をクリア
 		m_file_name = null;
