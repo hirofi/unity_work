@@ -11,7 +11,7 @@ public class GameEventStatic
 		m_hash = t.ToString().GetHashCode();
 	}
 
-	public int getHash()
+	public int _get_hash()
 	{
 		return m_hash;
 	}
@@ -101,8 +101,9 @@ public class EventManagerStatic : MonoBehaviour
 		return delegateLookup.ContainsKey(del);
 	}
 	
-	public void TriggerEvent (GameEventStatic e) {
-		EventDelegate del;
+//	public void TriggerEvent (GameEventStatic e) {
+	public void Dispatch(GameEventStatic e) {
+	EventDelegate del;
 		if (delegates.TryGetValue(e.GetType(), out del)) {
 			del.Invoke(e);
 			
@@ -118,7 +119,7 @@ public class EventManagerStatic : MonoBehaviour
 	}
 	
 	//Inserts the event into the current queue.
-	public bool QueueEvent(GameEventStatic evt) {
+	public bool QueueDispatch(GameEventStatic evt) {
 		if (!delegates.ContainsKey(evt.GetType())) {
 			Debug.LogWarning("EventManager: QueueEvent failed due to no listeners for event: " + evt.GetType());
 			return false;
@@ -140,7 +141,7 @@ public class EventManagerStatic : MonoBehaviour
 			}
 			
 			GameEventStatic evt = m_eventQueue.Dequeue() as GameEventStatic;
-			TriggerEvent(evt);
+			Dispatch(evt);
 			
 			if (LimitQueueProcesing)
 				timer += Time.deltaTime;

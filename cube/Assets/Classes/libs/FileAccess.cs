@@ -27,67 +27,43 @@ public class FileAccess : MonoBehaviour
 	enmFileAccessStatus m_file_access_status = enmFileAccessStatus.LOAD_READY;
 	
 	public delegate void f_ProgressDelegate( float aProgress );
-	public f_ProgressDelegate f_DownloadProgress = null;
+	public f_ProgressDelegate f_ReadProgress = null;
 
 	string m_text_data = null;
+	public string _text_data {
+		get { return m_text_data; 	}
+		set { m_text_data = value;	}
+	}
+
 	byte[] m_byte_data = null;
-
-	public FileAccess ()
-	{
-	}
-
-	string LoadText ( string aFileName )
-	{
-		string path = Application.persistentDataPath + aFileName;
-		string text = "";//File.ReadAllText(path);
-		return text;
-	}
-
-	public void f_DownLoadAssetAndSave()
-	{
-	}
-
-	public void f_GetDownLoadAssetAndSaveStatus()
-	{
-
-	}
-
-	public void f_GetDownloadProgress()
-	{
-
-	}
-
-	static void f_DownLoadProgress( float aProgress )
-	{
-
+	public byte[] _byte_data {
+		get { return m_byte_data; 	}
+		set { m_byte_data = value;	}
 	}
 
 	// aURL : http://domain:port/path/filename.ext
-	private IEnumerator DownLoadAndSave ( string aURL , string aSaveFileName ) {
+	public void f_Save( WWW p_w3 , string p_save_name , bool p_over_write )
+	{
 
-		WWW www = new WWW( aURL );
-		
-		while ( !www.isDone ) {
-			if( f_DownloadProgress != null )
-				f_DownLoadProgress(www.progress);
+		string path = Application.persistentDataPath + "/" + p_save_name;
 
-			yield return null;
+		if ( File.Exists( path ) )
+		{
+			Debug.Log ("Find local file." + Application.persistentDataPath + "/" + p_save_name);
+			File.Delete( path );
+		} else {
+			Debug.Log ("Can't find local file, Downloading..");
+
+			while (!p_w3.isDone) {
+			}
+
+			File.WriteAllBytes(path, p_w3.bytes);
 		}
-		
-		if (!string.IsNullOrEmpty(www.error)) { // ダウンロードでエラーが発生した
-			m_file_access_status = enmFileAccessStatus.LOAD_ERROR;
-		} else { // ダウンロードが正常に完了した
+	}
 
-			string save_file_name = null;
-			if( aSaveFileName == null )
-				save_file_name = Path.GetFileName(www.url);
-			else
-				save_file_name = aSaveFileName;
-
-//			File.WriteAllBytes(Application.persistentDataPath + "/" + save_file_name, www.bytes);
-			m_text_data = www.text;
-			m_byte_data = www.bytes;
-		}
+	public void f_Load( string p_file_name )
+	{
+		StartCoroutine (Load (p_file_name));
 	}
 
 	// aFilePath : 
@@ -96,8 +72,8 @@ public class FileAccess : MonoBehaviour
 		
 		while (!www.isDone)
 		{
-			if( f_DownloadProgress != null )
-				f_DownLoadProgress(www.progress);
+			if( f_ReadProgress != null )
+				f_ReadProgress(www.progress);
 
 			yield return null;
 		}

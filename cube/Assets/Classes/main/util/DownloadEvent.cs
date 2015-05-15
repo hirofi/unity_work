@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-public class DownloadEventController : GameEventDynamic {
+public class DownloadEvent : GameEventDynamic {
 	
 	public enum enmDownloadStatus
 	{
@@ -48,7 +48,7 @@ public class DownloadEventController : GameEventDynamic {
 
 	public GameObject m_download_object = null;
 
-	public DownloadEventController( List<ContentInformation> aRequestContents )
+	public DownloadEvent( List<ContentInformation> aRequestContents )
 	{
 		this.m_req_contents = aRequestContents;
 	}

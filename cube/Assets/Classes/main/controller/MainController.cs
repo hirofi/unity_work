@@ -116,14 +116,11 @@ public class MainController : MonoBehaviour {
 	EventManagerDynamic m_list_download_event_manager = null;
 	DownloadController m_list_down_load = null;
 
-
 	MapController m_map = null;
 	TextMesh m_progress_tm = null;
 
 	GameObject[] m_gm_objects;
 	int m_gm_object_count;
-
-
 
 	// Use this for initialization
 	void Start () {
@@ -139,6 +136,10 @@ public class MainController : MonoBehaviour {
 	{
 		DataManager.Instance.AddListener<GameEventDataAccess> (OnDataAccessCompleate);
 		ErrorManager.Instance.AddListener<GameEventError> (OnError);
+
+		SoundController.Instance.f_Play("a");
+		SoundController.Instance.f_Play ("b");
+		SoundController.Instance.f_Play ("c");
 	}
 
 	// -------------
@@ -210,19 +211,20 @@ public class MainController : MonoBehaviour {
 	void DoDownloadList()
 	{
 		m_list_down_load = new DownloadController ();
-		m_list_down_load.AddListener<DownloadEventController>(OnCompleateListDownload);
+		m_list_down_load.AddListener<DownloadEvent>(OnCompleateListDownload);
 		m_list_down_load.p_DomainName = "http://210.140.154.119:82/ab/";
 		m_list_down_load.p_FileName = "dllist.txt";
+		m_list_down_load._request_save_data = true;
 		m_list_down_load.StartDownload ();
 	}
 
 	// -------------
 	// ダウンロード対象のアセット一覧取得完了処理
 	// -------------
-	public void OnCompleateListDownload( DownloadEventController aEvent )
+	public void OnCompleateListDownload( DownloadEvent aEvent )
 	{
 		// ダウンロードリスト取得完了時
-		if (aEvent.p_DownloadFileType != DownloadEventController.enmDownloadFileType.DOWNLOAD_ORDER_LIST)
+		if (aEvent.p_DownloadFileType != DownloadEvent.enmDownloadFileType.DOWNLOAD_ORDER_LIST)
 			return;
 
 		foreach ( ContentInformation content_info in aEvent.p_RequestContents)
@@ -245,6 +247,9 @@ public class MainController : MonoBehaviour {
 		// シーケンスをアセットバンドルの取得に移行
 		m_now_sequence = enmSequence.LOAD_ASSET;
 
+		//
+
+
 	}
 
 	// -------------
@@ -253,7 +258,7 @@ public class MainController : MonoBehaviour {
 	void DoDownloadAsset( string[] aFileNameList )
 	{
 		m_down_load = new DownloadController ();
-		m_down_load.AddListener<DownloadEventController> (OnCompleateAssetDownload);
+		m_down_load.AddListener<DownloadEvent> (OnCompleateAssetDownload);
 		m_down_load.p_DownloadList = new List<ContentInformation> ();
 
 		foreach (string file_name in aFileNameList)
@@ -265,11 +270,11 @@ public class MainController : MonoBehaviour {
 	// -------------
 	// アセットダウンロード完了処理
 	// -------------
-	public void OnCompleateAssetDownload( DownloadEventController aEvent )
+	public void OnCompleateAssetDownload( DownloadEvent aEvent )
 	{
 
 		// アセットダウダウンロード完了時
-		if (aEvent.p_DownloadFileType != DownloadEventController.enmDownloadFileType.DOWNLOAD_ASSETBANDLE)
+		if (aEvent.p_DownloadFileType != DownloadEvent.enmDownloadFileType.DOWNLOAD_ASSETBANDLE)
 			return;
 
 		if( m_gm_objects == null )
@@ -322,4 +327,11 @@ public class MainController : MonoBehaviour {
 	{
 		Debug.Log ("Data Text");
 	}
+
+	// create sound
+	void f_OnSoundChangeStatus( SoundEvent aEvent )
+	{
+		
+	}
+
 }

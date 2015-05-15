@@ -28,8 +28,8 @@ public class MapModel {
 	public void f_LoadMapData( Vector3 aRangeFrom, Vector3 aRangeTo )
 	{
 		FileAccess file_access = new FileAccess();
-	 	file_access.f_DownLoadAssetAndSave();
-		file_access.f_DownloadProgress = f_FileAccessProgress;
+//	 	file_access.f_Load()
+//		file_access.f_ReadProgress = f_FileAccessProgress;
 
 	}
 

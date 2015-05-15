@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-public class ContentsDownloadModel : MonoBehaviour {
+public class ContentsDownloadModel : FileAccess {
 
 	// Use this for initialization
 	void Start () {
@@ -16,12 +16,6 @@ public class ContentsDownloadModel : MonoBehaviour {
 
 	}
 
-	string m_domain = null;
-	public string p_Domain {
-		get { return m_domain; 	}
-		set { m_domain = value;	}
-	}
-
 	public enum enmDownloadStatus
 	{
 		WAITING_FOR_START = 0,
@@ -30,7 +24,7 @@ public class ContentsDownloadModel : MonoBehaviour {
 		ERROR_EXIT,
 		ENTRY_MAX
 	}
-
+	
 	public enum enmDownloadContentType
 	{
 		UNKNOWN = 0,
@@ -39,6 +33,12 @@ public class ContentsDownloadModel : MonoBehaviour {
 		AUDIO,
 		TEXT,
 		ENTRY_MAX
+	}
+
+	string m_domain = null;
+	public string _domain {
+		get { return m_domain; 	}
+		set { m_domain = value;	}
 	}
 
 	private enmDownloadContentType m_download_content_type = enmDownloadContentType.UNKNOWN;
@@ -69,7 +69,7 @@ public class ContentsDownloadModel : MonoBehaviour {
 		set { m_read_thread_count = value; }
 	}
 
-	public void RequestDownloadFiles( List<ContentInformation> aReqDownloadList , bool aIsReqFileList )
+	public void RequestDownloadFiles( List<ContentInformation> aReqDownloadList , bool aIsReqFileList, bool p_req_save_data )
 	{
 		int count = 0;
 
@@ -85,7 +85,7 @@ public class ContentsDownloadModel : MonoBehaviour {
 
 			if( aIsReqFileList )
 			{
-				GetFile( req_contents.p_FileName );
+				GetFile( req_contents.p_FileName , p_req_save_data );
 			}
 			else
 			{
@@ -133,9 +133,7 @@ public class ContentsDownloadModel : MonoBehaviour {
 		}
 	}
 
-
-
-	private void GetFile( string aDownloadFileName )
+	private void GetFile( string aDownloadFileName , bool p_req_save_data )
 	{
 
 		ContentInformation content_info = new ContentInformation( aDownloadFileName , 0 );
@@ -144,42 +142,13 @@ public class ContentsDownloadModel : MonoBehaviour {
 		// Clear Cache
 		Caching.CleanCache();
 
-		string url = p_Domain + aDownloadFileName;
+		string url = _domain + aDownloadFileName;
 
-		StartCoroutine ( Download(content_info, url));
-	}
-
-	/// <summary>
-	/// アセットをダウンロードする。
-	/// 既にキャッシュがあればそちらから取り出す。
-	/// </summary>
-	/// <param name="aDownloadFileName">A download file name.</param>
-	private void GetAssetBandle( string aDownloadFileName , int aVersion)
-	{
-
-		ContentInformation content_info = new ContentInformation( aDownloadFileName , aVersion );
-		m_req_contents.Add( content_info );
-
-		// Clear Cache
-		Caching.CleanCache();
-
-#if   UNITY_ANDROID && !UNITY_EDITOR
-		string url = m_domain + aDownloadFileName + ".unity3d.android.unity3d?dl=1";
-
-#elif UNITY_IPHONE  && !UNITY_EDITOR
-		string url = m_domain + aDownloadFileName + ".unity3d.iphone.unity3d?dl=1";
-#else
-		string url = m_domain + aDownloadFileName + ".unity3d.unity3d?dl=2";
-#endif
-
-		StartCoroutine ( DownloadAndCache( content_info, url, 0 ) );
-
-
-
+		StartCoroutine ( Download(content_info, url, p_req_save_data));
 
 	}
 
-	private IEnumerator Download( ContentInformation aContentInformation, string aUrl )
+	private IEnumerator Download( ContentInformation aContentInformation, string aUrl, bool p_req_save_data )
 	{
 		WWW w3 = new WWW (aUrl);
 
@@ -200,12 +169,46 @@ public class ContentsDownloadModel : MonoBehaviour {
 			SetDownloadStatus (aContentInformation.p_FileName, ContentsAccess.enmDownloadStatus.COMPLETE);
 			aContentInformation.p_ContentType = ContentsAccess.enmDownloadContentType.TEXT;
 			aContentInformation.p_StringData = w3.text;
+			aContentInformation._byte_data = w3.bytes;
+
+			// 保存フラグがtrueならローカルファイルに書き出し
+			if( p_req_save_data )
+			{
+				f_Save( w3, aContentInformation.p_FileName, p_req_save_data );
+			}
 		}
 
 		if ( IsCompleateDownload() ) {
 			on_compleat (m_req_contents);
 		}
 
+
+	}
+
+	/// <summary>
+	/// アセットをダウンロードする。
+	/// 既にキャッシュがあればそちらから取り出す。
+	/// </summary>
+	/// <param name="aDownloadFileName">A download file name.</param>
+	private void GetAssetBandle( string aDownloadFileName , int aVersion)
+	{
+		
+		ContentInformation content_info = new ContentInformation( aDownloadFileName , aVersion );
+		m_req_contents.Add( content_info );
+		
+		// Clear Cache
+		Caching.CleanCache();
+		
+		#if   UNITY_ANDROID && !UNITY_EDITOR
+		string url = m_domain + aDownloadFileName + ".unity3d.android.unity3d?dl=1";
+		
+		#elif UNITY_IPHONE  && !UNITY_EDITOR
+		string url = m_domain + aDownloadFileName + ".unity3d.iphone.unity3d?dl=1";
+		#else
+		string url = m_domain + aDownloadFileName + ".unity3d.unity3d?dl=2";
+		#endif
+		
+		StartCoroutine ( DownloadAndCache( content_info, url, 0 ) );
 
 	}
 

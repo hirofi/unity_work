@@ -20,7 +20,7 @@ public class GameEventDynamic
 		m_hash = t.ToString().GetHashCode();
 	}
 	
-	public int getHash()
+	public int _get_hash()
 	{
 		return m_hash;
 	}
@@ -105,7 +105,7 @@ public class EventManagerDynamic
 	}
 
 	// イベント発行
-	public void TriggerEvent (GameEventDynamic e) {
+	public void Dispatch(GameEventDynamic e) {
 		EventDelegate del;
 		if (delegates.TryGetValue(e.GetType(), out del)) {
 			del.Invoke(e);

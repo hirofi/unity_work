@@ -52,13 +52,19 @@ public class DownloadController : EventManagerDynamic {
 		set { m_token = value;	}
 	}
 
+	private bool m_request_save_data = false;
+	public bool _request_save_data {
+		get { return m_request_save_data;	}
+		set { m_request_save_data = value;	}
+	}
+
 	private List<ContentInformation> m_download_list;
 	public List<ContentInformation> p_DownloadList {
 		get { return m_download_list;	}
 		set { m_download_list = value;	}
 	}
 
-	private DownloadEventController.enmDownloadFileType m_download_file_type;
+	private DownloadEvent.enmDownloadFileType m_download_file_type;
 
 	private ContentsDownloadModel m_downloadmodel;
 	public void StartDownload()
@@ -71,7 +77,7 @@ public class DownloadController : EventManagerDynamic {
 			if( m_file_name == null )
 				return;
 
-			m_download_file_type = DownloadEventController.enmDownloadFileType.DOWNLOAD_ORDER_LIST;
+			m_download_file_type = DownloadEvent.enmDownloadFileType.DOWNLOAD_ORDER_LIST;
 
 			// ダウンロードするファイル名をリスト化しリクエストする。
 			var downloadlist = new List<ContentInformation>();
@@ -82,9 +88,9 @@ public class DownloadController : EventManagerDynamic {
 
 			GameObject emptyGameObject = new GameObject();
 			m_downloadmodel = emptyGameObject.AddComponent<ContentsDownloadModel> ();
-			m_downloadmodel.p_Domain = (p_DomainName == null ) ? DEFAULT_DOMAIN : p_DomainName;
+			m_downloadmodel._domain = (p_DomainName == null ) ? DEFAULT_DOMAIN : p_DomainName;
 			m_downloadmodel.on_compleat = OnDownloadCompleate;
-			m_downloadmodel.RequestDownloadFiles(downloadlist , true);
+			m_downloadmodel.RequestDownloadFiles(downloadlist , true, false);
 		}
 		catch
 		{
@@ -107,15 +113,15 @@ public class DownloadController : EventManagerDynamic {
 			if( m_download_list == null )
 				return;
 
-			m_download_file_type = DownloadEventController.enmDownloadFileType.DOWNLOAD_ASSETBANDLE;
+			m_download_file_type = DownloadEvent.enmDownloadFileType.DOWNLOAD_ASSETBANDLE;
 
 			// ContentsDownloadModelクラスは MonoBehaviour を継承しているので
 			// new ではなく GameObject に AddComponet して生成する。。。 unity お作法により 
 			GameObject emptyGameObject = new GameObject();
 			m_downloadmodel = emptyGameObject.AddComponent<ContentsDownloadModel> ();
-			m_downloadmodel.p_Domain = (p_DomainName == null ) ? DEFAULT_DOMAIN : p_DomainName;
+			m_downloadmodel._domain = (p_DomainName == null ) ? DEFAULT_DOMAIN : p_DomainName;
 			m_downloadmodel.on_compleat = OnDownloadCompleate;
-			m_downloadmodel.RequestDownloadFiles( m_download_list , false);
+			m_downloadmodel.RequestDownloadFiles( m_download_list , false, false);
 		}
 		catch
 		{
@@ -134,14 +140,14 @@ public class DownloadController : EventManagerDynamic {
 
 	Debug.Log ("OnDownloadCompleate");
 
-		DownloadEventController download_event = new DownloadEventController ( aContentInformation );
+		DownloadEvent download_event = new DownloadEvent ( aContentInformation );
 		download_event.p_DownloadFileType = m_download_file_type;
 
-		TriggerEvent (download_event);
+		Dispatch(download_event);
 
 		// ダウンロードリクエスト対象をクリア
 		m_file_name = null;
 		m_download_list = null;
 	}
-
+	
 }

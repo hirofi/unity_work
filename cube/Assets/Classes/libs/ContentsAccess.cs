@@ -57,6 +57,13 @@ public class ContentInformation
 		set { m_text = value;	}
 	}
 
+	private byte[] m_byte;
+	public byte[] _byte_data
+	{
+		get { return m_byte; }
+		set { m_byte = value; }
+	}
+
 	public ContentInformation( string aFileName , int aVersion )
 	{
 		m_file_name = aFileName;
