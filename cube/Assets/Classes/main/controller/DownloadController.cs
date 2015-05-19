@@ -64,6 +64,8 @@ public class DownloadController : EventManagerDynamic {
 		set { m_download_list = value;	}
 	}
 
+	private GameObject m_download_go = null;
+
 	private DownloadEvent.enmDownloadFileType m_download_file_type;
 
 	private ContentsDownloadModel m_downloadmodel;
@@ -85,9 +87,12 @@ public class DownloadController : EventManagerDynamic {
 
 			// ContentsDownloadModelクラスは MonoBehaviour を継承しているので
 			// new ではなく GameObject に AddComponet して生成する。。。 unity お作法により 
+			if( m_download_go == null )
+			{
+				m_download_go = new GameObject("DownloadController");
+			}
 
-			GameObject emptyGameObject = new GameObject();
-			m_downloadmodel = emptyGameObject.AddComponent<ContentsDownloadModel> ();
+			m_downloadmodel = m_download_go.AddComponent<ContentsDownloadModel> ();
 			m_downloadmodel._domain = (p_DomainName == null ) ? DEFAULT_DOMAIN : p_DomainName;
 			m_downloadmodel.on_compleat = OnDownloadCompleate;
 			m_downloadmodel.RequestDownloadFiles(downloadlist , true, false);
@@ -117,7 +122,7 @@ public class DownloadController : EventManagerDynamic {
 
 			// ContentsDownloadModelクラスは MonoBehaviour を継承しているので
 			// new ではなく GameObject に AddComponet して生成する。。。 unity お作法により 
-			GameObject emptyGameObject = new GameObject();
+			GameObject emptyGameObject = new GameObject("ContentsDownloadModel");
 			m_downloadmodel = emptyGameObject.AddComponent<ContentsDownloadModel> ();
 			m_downloadmodel._domain = (p_DomainName == null ) ? DEFAULT_DOMAIN : p_DomainName;
 			m_downloadmodel.on_compleat = OnDownloadCompleate;
@@ -143,7 +148,7 @@ public class DownloadController : EventManagerDynamic {
 		DownloadEvent download_event = new DownloadEvent ( aContentInformation );
 		download_event.p_DownloadFileType = m_download_file_type;
 
-		Dispatch(download_event);
+		f_Dispatch(download_event);
 
 		// ダウンロードリクエスト対象をクリア
 		m_file_name = null;

@@ -11,7 +11,6 @@ GameObject:
   - 33: {fileID: 3398608}
   - 65: {fileID: 6515164}
   - 23: {fileID: 2313736}
-  - 114: {fileID: 11437464}
   m_Layer: 0
   m_Name: pbj04
   m_TagString: Untagged
@@ -211,17 +210,6 @@ TextMesh:
   m_Color:
     serializedVersion: 2
     rgba: 4294967040
---- !u!114 &11437464
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 101164}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0917db3115cf3394a85ce2bf27e4ebae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!136 &13660728
 CapsuleCollider:
   m_ObjectHideFlags: 1

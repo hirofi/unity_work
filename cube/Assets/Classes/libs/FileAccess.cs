@@ -1,5 +1,7 @@
 using UnityEngine;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 public class FileAccess : MonoBehaviour
@@ -41,6 +43,35 @@ public class FileAccess : MonoBehaviour
 		set { m_byte_data = value;	}
 	}
 
+	AudioClip m_audio_data = null;
+	public AudioClip _audio_clip {
+		get{ return m_audio_data; }
+	}
+
+	Texture2D m_texture_data = null;
+	public Texture _texture{
+		get{ return m_texture_data; }
+	}
+
+	UnityEngine.Object m_unity_object_data = null;
+	public UnityEngine.Object _unity_object{
+		get{ return m_unity_object_data; }
+	}
+
+	// オーディオデータ
+	public AudioClip p_AudioData {
+		get { return m_unity_object_data as AudioClip;	}
+	}
+	
+	// ゲームオブジェクト
+	public GameObject p_GameObjectData {
+		get { return m_unity_object_data as GameObject;	}
+	}
+	// テキスト
+	public TextAsset p_TextData2{
+		get { return m_unity_object_data as TextAsset; }
+	}
+
 	// aURL : http://domain:port/path/filename.ext
 	public void f_Save( WWW p_w3 , string p_save_name , bool p_over_write )
 	{
@@ -61,21 +92,24 @@ public class FileAccess : MonoBehaviour
 		}
 	}
 
-	public void f_Load( string p_file_name )
+	public void f_LoadAsset( string p_file_name )
 	{
-		StartCoroutine (Load (p_file_name));
+		StartCoroutine ( f_WwwLoad(p_file_name) );
 	}
 
 	// aFilePath : 
-	private IEnumerator Load ( string aSaveFileName ) {
-		WWW www = new WWW("file://" + Application.persistentDataPath + aSaveFileName);
-		
+	IEnumerator f_WwwLoad( string p_save_file_name )
+	{
+		string url = "file://" + Application.persistentDataPath + p_save_file_name;
+
+		WWW www = new WWW(url);
+
 		while (!www.isDone)
 		{
 			if( f_ReadProgress != null )
 				f_ReadProgress(www.progress);
 
-			yield return null;
+//			yield return null;
 		}
 		
 		if (!string.IsNullOrEmpty(www.error)) {
@@ -84,7 +118,18 @@ public class FileAccess : MonoBehaviour
 			m_file_access_status = enmFileAccessStatus.LOAD_SUCCESSFUL;
 			m_text_data = www.text;
 			m_byte_data = www.bytes;
+			m_texture_data = www.texture;
+			m_audio_data = www.audioClip;
+			m_unity_object_data = www.assetBundle.mainAsset;
 		}
+
+		yield return www;
+	}
+
+	// ファイル有無
+	public bool f_Exists(string p_file_name)
+	{
+		return System.IO.File.Exists( Application.persistentDataPath + p_file_name );
 	}
 
 }

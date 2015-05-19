@@ -39,15 +39,15 @@ public class EventManagerDynamic
 	private Dictionary<System.Delegate, bool> onceLookups = new Dictionary<System.Delegate, bool>();
 	
 
-	private EventDelegate AddDelegate<T>(EventDelegate<T> del) where T : GameEventDynamic {
+	private EventDelegate f_AddDelegate<T>(EventDelegate<T> p_del) where T : GameEventDynamic {
 		// Early-out if we've already registered this delegate
-		if (delegateLookup.ContainsKey(del))
+		if (delegateLookup.ContainsKey(p_del))
 			return null;
 		
 		// Create a new non-generic delegate which calls our generic one.
 		// This is the delegate we actually invoke.
-		EventDelegate internalDelegate = (e) => del((T)e);
-		delegateLookup[del] = internalDelegate;
+		EventDelegate internalDelegate = (e) => p_del((T)e);
+		delegateLookup[p_del] = internalDelegate;
 		
 		EventDelegate tempDel;
 		if (delegates.TryGetValue(typeof(T), out tempDel)) {
@@ -60,13 +60,13 @@ public class EventManagerDynamic
 	}
 
 	// リスナー登録
-	public void AddListener<T> (EventDelegate<T> del) where T : GameEventDynamic {
-		AddDelegate<T>(del);
+	public void f_AddListener<T> (EventDelegate<T> p_del) where T : GameEventDynamic {
+		f_AddDelegate<T>(p_del);
 	}
 
 	// リスナー登録（ワンショット：１度イベントが発行されるとリスナーが削除される）
-	public void AddListenerOnce<T> (EventDelegate<T> del) where T : GameEventDynamic {
-		EventDelegate result = AddDelegate<T>(del);
+	public void f_AddListenerOnce<T> (EventDelegate<T> p_del) where T : GameEventDynamic {
+		EventDelegate result = f_AddDelegate<T>(p_del);
 		
 		if(result != null){
 			// remember this is only called once
@@ -75,9 +75,9 @@ public class EventManagerDynamic
 	}
 
 	// 指定されたイベントクラスに該当するリスナーを削除する
-	public void RemoveListener<T> (EventDelegate<T> del) where T : GameEventDynamic {
+	public void f_RemoveListener<T> (EventDelegate<T> p_del) where T : GameEventDynamic {
 		EventDelegate internalDelegate;
-		if (delegateLookup.TryGetValue(del, out internalDelegate)) {
+		if (delegateLookup.TryGetValue(p_del, out internalDelegate)) {
 			EventDelegate tempDel;
 			if (delegates.TryGetValue(typeof(T), out tempDel)){
 				tempDel -= internalDelegate;
@@ -88,36 +88,36 @@ public class EventManagerDynamic
 				}
 			}
 			
-			delegateLookup.Remove(del);
+			delegateLookup.Remove(p_del);
 		}
 	}
 
 	// 全てのリスナーを削除する
-	public void RemoveAll(){
+	public void f_RemoveAll(){
 		delegates.Clear();
 		delegateLookup.Clear();
 		onceLookups.Clear();
 	}
 
 	// 現在登録されているリスナーを取得する
-	public bool HasListener<T> (EventDelegate<T> del) where T : GameEventDynamic {
+	public bool f_HasListener<T> (EventDelegate<T> del) where T : GameEventDynamic {
 		return delegateLookup.ContainsKey(del);
 	}
 
 	// イベント発行
-	public void Dispatch(GameEventDynamic e) {
+	public void f_Dispatch(GameEventDynamic p_e) {
 		EventDelegate del;
-		if (delegates.TryGetValue(e.GetType(), out del)) {
-			del.Invoke(e);
+		if (delegates.TryGetValue(p_e.GetType(), out del)) {
+			del.Invoke(p_e);
 			
 			// remove listeners which should only be called once
-			foreach(EventDelegate k in delegates[e.GetType()].GetInvocationList()){
+			foreach(EventDelegate k in delegates[p_e.GetType()].GetInvocationList()){
 				if(onceLookups.ContainsKey(k)){
 					onceLookups.Remove(k);
 				}
 			}
 		} else {
-			Debug.LogWarning("Event: " + e.GetType() + " has no listeners");
+			Debug.LogWarning("Event: " + p_e.GetType() + " has no listeners");
 		}
 	}
 

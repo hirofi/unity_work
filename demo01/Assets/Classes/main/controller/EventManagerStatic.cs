@@ -40,7 +40,7 @@ public class EventManagerStatic : MonoBehaviour
 			return s_Instance;
 		}
 	}
-	
+
 	private EventDelegate AddDelegate<T>(EventDelegate<T> del) where T : GameEventStatic {
 		// Early-out if we've already registered this delegate
 		if (delegateLookup.ContainsKey(del))

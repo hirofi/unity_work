@@ -122,9 +122,28 @@ public class MainController : MonoBehaviour {
 	GameObject[] m_gm_objects;
 	int m_gm_object_count;
 
+	// サウンドコントローラ用のGameObject
+	GameObject m_sound_go = null;
+
+	void Awake()
+	{
+		m_sound_go = new GameObject ("SoundController");
+		m_sound_go.AddComponent<SoundController>();
+	}
+
 	// Use this for initialization
 	void Start () {
 		m_now_sequence = enmSequence.INITIALIZE;
+
+		SoundController.Instance.f_Attach ("bgm_wav_01");
+		SoundController.Instance.f_Attach ("bgm_ogg_01");
+
+
+		//
+		GameObject obj = Instantiate(Resources.Load("Prefab/obj01")) as GameObject;
+		obj.transform.position = new Vector3(5,5,0);
+		obj.AddComponent<ObjPrefabView> ();
+
 	}
 	
 	// Update is called once per frame
@@ -134,12 +153,9 @@ public class MainController : MonoBehaviour {
 
 	MainController()
 	{
-		DataManager.Instance.AddListener<GameEventDataAccess> (OnDataAccessCompleate);
-		ErrorManager.Instance.AddListener<GameEventError> (OnError);
+		DataManager.Instance.f_AddListener<GameEventDataAccess> (OnDataAccessCompleate);
+		ErrorManager.Instance.f_AddListener<GameEventError> (OnError);
 
-		SoundController.Instance.f_Play("a");
-		SoundController.Instance.f_Play ("b");
-		SoundController.Instance.f_Play ("c");
 	}
 
 	// -------------
@@ -211,7 +227,7 @@ public class MainController : MonoBehaviour {
 	void DoDownloadList()
 	{
 		m_list_down_load = new DownloadController ();
-		m_list_down_load.AddListener<DownloadEvent>(OnCompleateListDownload);
+		m_list_down_load.f_AddListener<DownloadEvent>(OnCompleateListDownload);
 		m_list_down_load.p_DomainName = "http://210.140.154.119:82/ab/";
 		m_list_down_load.p_FileName = "dllist.txt";
 		m_list_down_load._request_save_data = true;
@@ -247,9 +263,6 @@ public class MainController : MonoBehaviour {
 		// シーケンスをアセットバンドルの取得に移行
 		m_now_sequence = enmSequence.LOAD_ASSET;
 
-		//
-
-
 	}
 
 	// -------------
@@ -258,7 +271,7 @@ public class MainController : MonoBehaviour {
 	void DoDownloadAsset( string[] aFileNameList )
 	{
 		m_down_load = new DownloadController ();
-		m_down_load.AddListener<DownloadEvent> (OnCompleateAssetDownload);
+		m_down_load.f_AddListener<DownloadEvent> (OnCompleateAssetDownload);
 		m_down_load.p_DownloadList = new List<ContentInformation> ();
 
 		foreach (string file_name in aFileNameList)
@@ -284,9 +297,9 @@ public class MainController : MonoBehaviour {
 
 			m_gm_objects [m_gm_object_count] = Instantiate (content_info.p_GameObjectData);
 			m_gm_objects [m_gm_object_count].name = content_info.p_FileName;
-
+			m_gm_objects [m_gm_object_count].AddComponent<ObjPrefabView>();
 			var mypos = transform.position;
-			var addpos = new Vector3 (Random.value, Random.value, Random.value);
+			var addpos = new Vector3 (Random.value*10, Random.value*10, Random.value*10);
 			mypos += addpos;
 
 			m_gm_objects [m_gm_object_count].transform.position = mypos;
