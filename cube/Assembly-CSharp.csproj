@@ -50,6 +50,7 @@
      <Compile Include="Assets\Classes\libs\EventManagerDynamic.cs" />
      <Compile Include="Assets\Classes\libs\EventManagerStatic.cs" />
      <Compile Include="Assets\Classes\libs\FileAccess.cs" />
+     <Compile Include="Assets\Classes\libs\GameException.cs" />
      <Compile Include="Assets\Classes\libs\SingletonMonoBehaviour.cs" />
      <Compile Include="Assets\Classes\main\controller\AttackerController.cs" />
      <Compile Include="Assets\Classes\main\controller\DataController.cs" />
@@ -57,8 +58,8 @@
      <Compile Include="Assets\Classes\main\controller\MainController.cs" />
      <Compile Include="Assets\Classes\main\controller\MapController.cs" />
      <Compile Include="Assets\Classes\main\controller\SoundController.cs" />
-     <Compile Include="Assets\Classes\main\model\ContentsDownloadModel.cs" />
      <Compile Include="Assets\Classes\main\model\DataModel.cs" />
+     <Compile Include="Assets\Classes\main\model\DownloadModel.cs" />
      <Compile Include="Assets\Classes\main\model\MapModel.cs" />
      <Compile Include="Assets\Classes\main\model\SoundModel.cs" />
      <Compile Include="Assets\Classes\main\util\DataEvet.cs" />

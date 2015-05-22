@@ -19,7 +19,6 @@ public class DataManager : EventManagerDynamic {
 			return s_Instance;
 		}
 	}
-
 }
 
 public class GameEventDataAccess : GameEventDynamic
@@ -110,11 +109,9 @@ public class GameEventError : GameEventDynamic
 
 public class MainController : MonoBehaviour {
 
-	EventManagerDynamic m_download_event_manager = null;
 	DownloadController m_down_load = null;
-
-	EventManagerDynamic m_list_download_event_manager = null;
-	DownloadController m_list_down_load = null;
+	DownloadController m_list_download = null;
+	DownloadController m_sound_file_download = null;
 
 	MapController m_map = null;
 	TextMesh m_progress_tm = null;
@@ -137,7 +134,8 @@ public class MainController : MonoBehaviour {
 
 		SoundController.Instance.f_Attach ("bgm_wav_01");
 		SoundController.Instance.f_Attach ("bgm_ogg_01");
-
+		SoundController.Instance.f_Attach ("bgm_wav_02");
+		SoundController.Instance.f_Attach ("bgm_ogg_02");
 
 		//
 		GameObject obj = Instantiate(Resources.Load("Prefab/obj01")) as GameObject;
@@ -167,6 +165,8 @@ public class MainController : MonoBehaviour {
 		INITIALIZE,			//　初期化処理
 		LOAD_DOWNLOAD_LIST, // ダウンロード対象のアセット一覧取得
 		LOAD_ASSET,			// アセットダウンロード
+		LOAD_SOUND,			// サウンドファイル
+		LOAD_COMPLEATE,		// ダウンロード完了
 		ENTRY_MAX
 	}
 
@@ -187,10 +187,12 @@ public class MainController : MonoBehaviour {
 			break;
 		case enmSequence.LOAD_ASSET:
 			m_now_sequence = enmSequence.NOP;
-			m_down_load.StartDownloadAssetBandles ();
-
+			m_down_load.f_StartDownloadAssetBandles ();
 			break;
-		
+		case enmSequence.LOAD_SOUND:
+			m_now_sequence = enmSequence.NOP;
+			m_sound_file_download.f_StartDownload();
+			break;
 		}
 	}
 
@@ -226,58 +228,75 @@ public class MainController : MonoBehaviour {
 	// -------------
 	void DoDownloadList()
 	{
-		m_list_down_load = new DownloadController ();
-		m_list_down_load.f_AddListener<DownloadEvent>(OnCompleateListDownload);
-		m_list_down_load.p_DomainName = "http://210.140.154.119:82/ab/";
-		m_list_down_load.p_FileName = "dllist.txt";
-		m_list_down_load._request_save_data = true;
-		m_list_down_load.StartDownload ();
+		m_list_download = new DownloadController ();
+		m_list_download.f_AddListener<DownloadEvent>(OnCompleateListDownload);
+		m_list_download._download_list = new List<ContentInformation> ();
+		ContentInformation info = new ContentInformation ("dllist.txt", 0);
+		info._request_save_data = true;
+		m_list_download._download_list.Add (info);
+
+		m_list_download._domain_name = "http://210.140.154.119:82/ab/";
+		m_list_download._download_request_type = DownloadController.enmDownloadRequestType.REQUEST_DOWNLOAD_FILE_LIST;
+
+		m_list_download.f_StartDownload ();
 	}
 
 	// -------------
 	// ダウンロード対象のアセット一覧取得完了処理
 	// -------------
+	List<string> m_prefab_name_list = new List<string>();
+	List<string> m_sound_file_name_list = new List<string>();
 	public void OnCompleateListDownload( DownloadEvent aEvent )
 	{
 		// ダウンロードリスト取得完了時
-		if (aEvent.p_DownloadFileType != DownloadEvent.enmDownloadFileType.DOWNLOAD_ORDER_LIST)
+		if (aEvent._download_file_type != DownloadEvent.enmDownloadFileType.DOWNLOAD_ORDER_LIST)
 			return;
 
-		foreach ( ContentInformation content_info in aEvent.p_RequestContents)
+		foreach ( ContentInformation content_info in aEvent._request_contents)
 		{
-			if( content_info.p_StringData != null )
+			if( content_info._string_data != null )
 			{
-				string[] file_name_list = content_info.p_StringData.Split (
-					new char[]{'\n','\r'},
-				System.StringSplitOptions.RemoveEmptyEntries);
-				DoDownloadAsset( file_name_list );
+				Dictionary< string, List<string> > req_list = m_list_download.f_GetDownloadLists(content_info._string_data);
+
+				// アセットのダウンロード
+				DoDownloadAsset( req_list[DownloadController.PREFAB_FILE_LIST] );
+				
+				// サウンドファイルのダウンロード
+				DoDownloadFile( req_list[DownloadController.SOUND_FILE_LIST] );
+
 			}
 
 			// 1リストのみ対応のため、ここでブレイク
 			break;
 		}
 
-		// 次回イベント発行の為にここでクリア
-		aEvent = null;
+		// ダウンロードの完了状態を確認、エラーなら終了
+		if(m_list_download.f_IsDownloadSucceed() == false )
+		{
+			List<ContentInformation> retry_list = m_list_download.f_GetRetryList();
+			m_now_sequence = enmSequence.NOP;
+			return;
+		}
 
 		// シーケンスをアセットバンドルの取得に移行
 		m_now_sequence = enmSequence.LOAD_ASSET;
-
 	}
 
 	// -------------
 	// アセットダウンロード開始処理
 	// -------------
-	void DoDownloadAsset( string[] aFileNameList )
+	void DoDownloadAsset( List<string> aFileNameList )
 	{
 		m_down_load = new DownloadController ();
 		m_down_load.f_AddListener<DownloadEvent> (OnCompleateAssetDownload);
-		m_down_load.p_DownloadList = new List<ContentInformation> ();
+		m_down_load._download_list = new List<ContentInformation> ();
 
 		foreach (string file_name in aFileNameList)
-			m_down_load.p_DownloadList.Add (new ContentInformation (file_name, 0));
+			m_down_load._download_list.Add (new ContentInformation (file_name, 0));
 
-		m_down_load.p_DomainName = "http://210.140.154.119:82/ab/";
+		m_down_load._domain_name = "http://210.140.154.119:82/ab/";
+		m_down_load._download_request_type = DownloadController.enmDownloadRequestType.REQUEST_ASSET_BANDLE;
+
 	}
 
 	// -------------
@@ -287,34 +306,69 @@ public class MainController : MonoBehaviour {
 	{
 
 		// アセットダウダウンロード完了時
-		if (aEvent.p_DownloadFileType != DownloadEvent.enmDownloadFileType.DOWNLOAD_ASSETBANDLE)
+		if (aEvent._download_file_type != DownloadEvent.enmDownloadFileType.DOWNLOAD_ASSETBANDLE)
 			return;
 
 		if( m_gm_objects == null )
 			m_gm_objects = new GameObject[10];
 
-		foreach (ContentInformation content_info in aEvent.p_RequestContents) {
+		foreach (ContentInformation content_info in aEvent._request_contents) {
 
-			m_gm_objects [m_gm_object_count] = Instantiate (content_info.p_GameObjectData);
-			m_gm_objects [m_gm_object_count].name = content_info.p_FileName;
-			m_gm_objects [m_gm_object_count].AddComponent<ObjPrefabView>();
-			var mypos = transform.position;
-			var addpos = new Vector3 (Random.value*10, Random.value*10, Random.value*10);
-			mypos += addpos;
+			if( content_info._download_status == ContentsAccess.enmDownloadStatus.COMPLETE )
+			{
+				m_gm_objects [m_gm_object_count] = Instantiate (content_info._game_object_data);
+				m_gm_objects [m_gm_object_count].name = content_info._file_name;
+				m_gm_objects [m_gm_object_count].AddComponent<ObjPrefabView>();
+				var mypos = transform.position;
+				var addpos = new Vector3 (Random.value*10, Random.value*10, Random.value*10);
+				mypos += addpos;
 
-			m_gm_objects [m_gm_object_count].transform.position = mypos;
+				m_gm_objects [m_gm_object_count].transform.position = mypos;
+				m_gm_object_count++;
+			}
 
-			m_gm_object_count++;
 		}
 
-		// 次回イベント発行の為にここでクリア
-		aEvent = null;
+		// シーケンスをアセットバンドルの取得に移行
+		m_now_sequence = enmSequence.LOAD_SOUND;
 
-		// シーケンスを終了
-		m_now_sequence = enmSequence.NOP;
+		Debug.Log ("★asset download compleate " );
 
 	}
 
+	// -------------
+	// ファイルダウンロード開始処理
+	// -------------
+	List<DownloadController> m_file_download = new List<DownloadController>();
+	void DoDownloadFile( List<string> p_file_name )
+	{
+
+		m_sound_file_download = new DownloadController ();
+		m_sound_file_download.f_AddListener<DownloadEvent> (OnCompleateFileDownload);
+		m_sound_file_download._download_list = new List<ContentInformation> ();
+
+		foreach (string file_name in p_file_name) {
+			ContentInformation info = new ContentInformation (file_name, 0);
+			info._request_save_data = true;
+			m_sound_file_download._download_list.Add (info);
+		}
+
+		m_sound_file_download._domain_name = "http://210.140.154.119:82/";
+		m_sound_file_download._download_request_type = DownloadController.enmDownloadRequestType.REQUEST_DATA_FILE;
+
+	}
+	
+	// -------------
+	// ファイルダウンロード完了処理
+	// -------------
+	public void OnCompleateFileDownload( DownloadEvent aEvent )
+	{
+
+		// シーケンスを終了
+		m_now_sequence = enmSequence.NOP;
+		
+		Debug.Log ("★file download compleate " );
+	}
 
 	void DrawMap()
 	{

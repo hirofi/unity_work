@@ -22,26 +22,26 @@ public class DownloadEvent : GameEventDynamic {
 	}
 
 	enmDownloadFileType m_download_file_type;
-	public enmDownloadFileType p_DownloadFileType {
+	public enmDownloadFileType _download_file_type {
 		get { return m_download_file_type;	}
 		set { m_download_file_type = value;	}
 	}
 
 	private WWW m_www = null;
-	public WWW www {
+	public WWW _www {
 		get { return m_www;		}
 		set { m_www = value;	}
 	}
 
 	private DownloadToken m_token = null;
-	public DownloadToken p_Token {
+	public DownloadToken _token {
 		get { return m_token;	}
 		set { m_token = value;	}
 	}
 
 	// 複数ダウンロード時の取得コンテンツ一覧
 	private List<ContentInformation> m_req_contents;
-	public List<ContentInformation> p_RequestContents {
+	public List<ContentInformation> _request_contents {
 		get { return m_req_contents;	}
 		set { m_req_contents = value;	}
 	}

@@ -4,6 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
+// Tip : セーブ先について
+// PC ローカルなら C:\Users\inoue\AppData\LocalLow\DefaultCompany\プロジェクト名\
+// 
 public class FileAccess : MonoBehaviour
 {
 
@@ -31,10 +34,10 @@ public class FileAccess : MonoBehaviour
 	public delegate void f_ProgressDelegate( float aProgress );
 	public f_ProgressDelegate f_ReadProgress = null;
 
-	string m_text_data = null;
-	public string _text_data {
-		get { return m_text_data; 	}
-		set { m_text_data = value;	}
+	string m_string_data = null;
+	public string _string_data {
+		get { return m_string_data; 	}
+		set { m_string_data = value;	}
 	}
 
 	byte[] m_byte_data = null;
@@ -59,16 +62,16 @@ public class FileAccess : MonoBehaviour
 	}
 
 	// オーディオデータ
-	public AudioClip p_AudioData {
+	public AudioClip _audio_data {
 		get { return m_unity_object_data as AudioClip;	}
 	}
 	
 	// ゲームオブジェクト
-	public GameObject p_GameObjectData {
+	public GameObject _game_object_data {
 		get { return m_unity_object_data as GameObject;	}
 	}
 	// テキスト
-	public TextAsset p_TextData2{
+	public TextAsset _text_data{
 		get { return m_unity_object_data as TextAsset; }
 	}
 
@@ -116,7 +119,7 @@ public class FileAccess : MonoBehaviour
 			m_file_access_status = enmFileAccessStatus.LOAD_ERROR;
 		} else {
 			m_file_access_status = enmFileAccessStatus.LOAD_SUCCESSFUL;
-			m_text_data = www.text;
+			m_string_data = www.text;
 			m_byte_data = www.bytes;
 			m_texture_data = www.texture;
 			m_audio_data = www.audioClip;

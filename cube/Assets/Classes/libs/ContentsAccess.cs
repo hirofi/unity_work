@@ -8,53 +8,53 @@ public class ContentInformation
 {
 	// ダウンロードステータス
 	private ContentsAccess.enmDownloadStatus m_download_status = 0;
-	public ContentsAccess.enmDownloadStatus p_DownloadStatus {
+	public ContentsAccess.enmDownloadStatus _download_status {
 		get { return m_download_status;	}
 		set { m_download_status = value;}
 	}
 	//ファイル名
 	private string m_file_name = null;
-	public string p_FileName {
+	public string _file_name {
 		get { return m_file_name;	}
 		set { m_file_name = value;	}
 	}
 	// コンテンツタイプ
 	private ContentsAccess.enmDownloadContentType m_content_type = 0;
-	public ContentsAccess.enmDownloadContentType p_ContentType {
+	public ContentsAccess.enmDownloadContentType _content_type {
 		get { return m_content_type;	}
 		set { m_content_type = value;	}
 	}
 	// バージョン
 	private int m_content_version = 0;
-	public int p_Version{
+	public int _version{
 		get { return m_content_version;	}
 		set { m_content_version = value;	}
 	}
 	
 	private UnityEngine.Object m_unity_object = null;
-	public UnityEngine.Object p_UnityObjectData {
+	public UnityEngine.Object _unity_object_data {
 		get { return m_unity_object;	}
 		set { m_unity_object = value;	}
 	}
 	
 	// オーディオデータ
-	public AudioClip p_AudioData {
+	public AudioClip _audio_data {
 		get { return m_unity_object as AudioClip;	}
 	}
 	
 	// ゲームオブジェクト
-	public GameObject p_GameObjectData {
+	public GameObject _game_object_data {
 		get { return m_unity_object as GameObject;	}
 	}
 	// テキスト
-	public TextAsset p_TextData2{
+	public TextAsset _text_data{
 		get { return m_unity_object as TextAsset; }
 	}
 
-	private string m_text = null;
-	public string p_StringData{
-		get { return m_text; }
-		set { m_text = value;	}
+	private string m_string_data = null;
+	public string _string_data{
+		get { return m_string_data; }
+		set { m_string_data = value;	}
 	}
 
 	private byte[] m_byte;
@@ -62,6 +62,33 @@ public class ContentInformation
 	{
 		get { return m_byte; }
 		set { m_byte = value; }
+	}
+
+	private int m_retry_count;
+	public int _retry_count
+	{
+		get { return m_retry_count; }
+		set { m_retry_count = value; }
+	}
+
+	private string m_proc_uuid;
+	public string _proc_uuid
+	{
+		get {return m_proc_uuid;}
+		set { m_proc_uuid = value; }
+	}
+
+	private bool m_request_download_list;
+	public bool _request_download_list
+	{
+		get {return m_request_download_list;}
+		set { m_request_download_list = value; }
+	}
+
+	private bool m_request_save_data = false;
+	public bool _request_save_data {
+		get { return m_request_save_data;	}
+		set { m_request_save_data = value;	}
 	}
 
 	public ContentInformation( string aFileName , int aVersion )
@@ -140,13 +167,13 @@ public class ContentsAccess : MonoBehaviour {
 		int count = 0;
 		foreach( ContentInformation m_req_contents in aReqDownloadList )
 		{
-			if( m_req_contents.p_DownloadStatus != enmDownloadStatus.WAITING_FOR_START )
+			if( m_req_contents._download_status != enmDownloadStatus.WAITING_FOR_START )
 				continue;
 			
 			if( m_read_thread_count > aReqDownloadList.Count )
 				continue;
 			
-			f_GetAssetBandle( m_req_contents.p_FileName, m_req_contents.p_Version );
+			f_GetAssetBandle( m_req_contents._file_name, m_req_contents._version );
 			count++;
 		}
 	}
@@ -183,7 +210,7 @@ public class ContentsAccess : MonoBehaviour {
 		while (!Caching.ready)
 			yield return null;
 		
-		f_SetDownloadStatus ( aContentInformation.p_FileName, enmDownloadStatus.DOWNLOADING);
+		f_SetDownloadStatus ( aContentInformation._file_name, enmDownloadStatus.DOWNLOADING);
 
 		// 同じバージョンが存在する場合はアセットバンドルをキャッシュからロードする
 		// またはダウンロードしてキャッシュに格納します。
@@ -192,9 +219,9 @@ public class ContentsAccess : MonoBehaviour {
 			// ファイル名でオブジェクト配列を検索
 			int req_idx = -1;
 			foreach (ContentInformation req in m_req_contents) {
-				if( req.p_FileName == aContentInformation.p_FileName )
+				if( req._file_name == aContentInformation._file_name )
 				{
-					req.p_DownloadStatus = enmDownloadStatus.DOWNLOADING;
+					req._download_status = enmDownloadStatus.DOWNLOADING;
 					req_idx = m_req_contents.IndexOf( req );
 					break;
 				}
@@ -206,42 +233,42 @@ public class ContentsAccess : MonoBehaviour {
 			yield return w3;
 			
 			if ( w3.error != null ) {
-				f_SetDownloadStatus (aContentInformation.p_FileName, enmDownloadStatus.ERROR_EXIT);
+				f_SetDownloadStatus (aContentInformation._file_name, enmDownloadStatus.ERROR_EXIT);
 				throw new Exception ("WWWダウンロードにエラーがありました:" + w3.error);
 			}
 			else
 			{
-				m_req_contents[req_idx].p_UnityObjectData = w3.assetBundle.mainAsset;
+				m_req_contents[req_idx]._unity_object_data = w3.assetBundle.mainAsset;
 				if (aUrl.IndexOf("texture") > -1)
 				{
 					//画像
-					m_req_contents[req_idx].p_ContentType = enmDownloadContentType.TEXTURE;
+					m_req_contents[req_idx]._content_type = enmDownloadContentType.TEXTURE;
 					
 				}
 				else if (aUrl.IndexOf("3d") > -1)
 				{
 					//3Dデータ
-					m_req_contents[req_idx].p_ContentType = enmDownloadContentType.GAMEOBJECT;
+					m_req_contents[req_idx]._content_type = enmDownloadContentType.GAMEOBJECT;
 				}
 				else if (aUrl.IndexOf("audio") > -1)
 				{
 					//サウンド
-					m_req_contents[req_idx].p_ContentType = enmDownloadContentType.AUDIO;
+					m_req_contents[req_idx]._content_type = enmDownloadContentType.AUDIO;
 				}
 				else if (aUrl.IndexOf("text") > -1 )
 				{
 					// テキスト
-					m_req_contents[req_idx].p_ContentType = enmDownloadContentType.TEXT;
+					m_req_contents[req_idx]._content_type = enmDownloadContentType.TEXT;
 				}
 				else
 				{
 					// 不明なコンテンツ
-					m_req_contents[req_idx].p_ContentType = enmDownloadContentType.UNKNOWN;
+					m_req_contents[req_idx]._content_type = enmDownloadContentType.UNKNOWN;
 				}
 				
 			}
 			
-			f_SetDownloadStatus (aContentInformation.p_FileName, enmDownloadStatus.COMPLETE);
+			f_SetDownloadStatus (aContentInformation._file_name, enmDownloadStatus.COMPLETE);
 			
 		}
 		yield return null;
@@ -250,8 +277,8 @@ public class ContentsAccess : MonoBehaviour {
 	public void f_SetDownloadStatus( string aAssetName , enmDownloadStatus aStatus )
 	{
 		foreach (ContentInformation req in m_req_contents) {
-			if( req.p_FileName == aAssetName )
-				req.p_DownloadStatus = aStatus;
+			if( req._file_name == aAssetName )
+				req._download_status = aStatus;
 		}
 	}
 	
@@ -260,11 +287,11 @@ public class ContentsAccess : MonoBehaviour {
 		bool ret = false;
 		
 		foreach (ContentInformation req in m_req_contents) {
-			if( req.p_DownloadStatus == enmDownloadStatus.WAITING_FOR_START ||
-			   req.p_DownloadStatus == enmDownloadStatus.DOWNLOADING )
+			if( req._download_status == enmDownloadStatus.WAITING_FOR_START ||
+			   req._download_status == enmDownloadStatus.DOWNLOADING )
 				return false;
-			else if( req.p_DownloadStatus == enmDownloadStatus.COMPLETE ||
-			        req.p_DownloadStatus == enmDownloadStatus.ERROR_EXIT )
+			else if( req._download_status == enmDownloadStatus.COMPLETE ||
+			        req._download_status == enmDownloadStatus.ERROR_EXIT )
 				ret = true;
 		}
 		

@@ -4,16 +4,17 @@ using System.Collections.Generic;
 
 public class GameEventStatic
 {
+
 	private int m_hash;
+	public int _hash {
+		get { return m_hash;	}
+		set { m_hash = value;	}
+	}
+	
 	public GameEventStatic()
 	{
 		float t = Time.realtimeSinceStartup;
 		m_hash = t.ToString().GetHashCode();
-	}
-
-	public int _get_hash()
-	{
-		return m_hash;
 	}
 }
 

@@ -72,13 +72,10 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 
 	private static SoundController s_Instance;
 
-	EventManagerDynamic m_event_manager;
-
 	private List<SoundInformation> m_info_list = new List<SoundInformation>();
 	private List<GameObject> m_go_list = new List<GameObject>();
 
 	private SoundModel m_sound_model = null;
-	private GameObject m_sound_game_object = null;
 
 	AudioSource m_sound_source_bgm;
 	AudioSource[] m_sound_source_se = new AudioSource[SE_CHANEL_MAX];
@@ -92,18 +89,11 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 
 		DontDestroyOnLoad(this.gameObject);
 
-		GameObject emptyGameObject = new GameObject("SoundModel");
-		m_sound_model = emptyGameObject.AddComponent<SoundModel> ();
-
-		m_sound_game_object = new GameObject ("SoundGameObject");
-		if (m_sound_game_object == null) {
-			Debug.LogError("ERROR : new m_sound_game_objcet");
+		m_sound_model = GameObject.Find(this.name).AddComponent<SoundModel> ();
+		if (m_sound_model == null) {
+			Debug.LogError("ERROR : new m_sound_model");
 		}
-	}
 
-	private void f_init_event_manager()
-	{
-		m_event_manager = new EventManagerDynamic();
 	}
 
 	public bool f_AttachList( List<string> p_request_list )
@@ -119,14 +109,14 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 		return true;
 	}
 
-	private SoundInformation f_search_information(string p_name)
+	public SoundInformation f_search_information(string p_name)
 	{
 		if (m_info_list == null || m_info_list.Count < 0)
 			return null;
 
 		foreach (SoundInformation info in m_info_list )
 		{
-			// 上書き
+			// 検索該当あり
 			if( p_name == info._file_name )
 			{
 				return info;
@@ -135,6 +125,17 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 
 		return null;
 	}
+
+	public bool f_remove_information( SoundInformation p_info )
+	{
+		if (m_info_list == null || m_info_list.Count < 0)
+			return false;
+
+		m_info_list.Remove (p_info);
+
+		return true;
+	}
+
 
 	// サウンド情報をアタッチする
 	public SoundInformation f_Attach( string p_request_file_name )
@@ -155,10 +156,10 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 			{
 				info = new SoundInformation( p_request_file_name );
 				info._audio_clip = audio_clip;
-				info._audio_source = m_sound_game_object.AddComponent<AudioSource>();
+				info._audio_source = GameObject.Find(this.name).AddComponent<AudioSource>();
+				info._audio_source.clip = info._audio_clip;
 				m_info_list.Add(info);
 			}
-
 		}
 
 		Debug.Log("file_name="+p_request_file_name);
@@ -169,8 +170,10 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 	public void f_Detach( SoundInformation p_request )
 	{
 		SoundInformation info = f_search_information( p_request._file_name );
-
-		m_info_list.Remove (info);
+		Destroy (info._audio_source);
+		if (f_remove_information (info) == false) {
+			Debug.Log("ERROR : f_remove_information ");
+		}
 	}
 
 	private int m_bgm_loop_count = -1;
@@ -184,7 +187,6 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 		}
 
 		info._loop_count = p_loop_count;
-		info._audio_source.clip = info._audio_clip;
 		info._audio_source.Play ();
 
 		Debug.Log ("f_Play status="+info._audio_source.isPlaying +" file="+ p_file_name);
@@ -198,9 +200,11 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 		if (p_info == null) {
 			Debug.Log("Error: p_info is null ");
 		}
-		
+
+		float t = p_info._audio_source.time;
+
 		p_info._audio_source.Play();
-		
+
 		Debug.Log ("f_Stop status="+p_info._audio_source.isPlaying +" file="+ p_info._file_name);
 	}
 
@@ -228,21 +232,15 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 		Debug.Log ("f_Pause status="+p_info._audio_source.isPlaying +" file="+ p_info._file_name);
 	}
 
-	void f_OnChangeStatus( SoundEvent aEventDataAccess )
+	public void f_UnPause( SoundInformation p_info )
 	{
+		if (p_info == null) {
+			Debug.Log("Error: p_info is null ");
+		}
+		p_info._audio_source.UnPause();
+		
+		Debug.Log ("f_Pause status="+p_info._audio_source.isPlaying +" file="+ p_info._file_name);
 
-	}
-
-	void f_PauseComplete()
-	{
-	}
-
-	void f_PlayComplete()
-	{
-	}
-
-	void f_StopComplete()
-	{
 	}
 
 }
