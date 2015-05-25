@@ -69,10 +69,10 @@ public class DownloadModel : FileAccess {
 		set { m_read_thread_count = value; }
 	}
 
-	public void RequestDownloadFiles( List<ContentInformation> p_req_download_list , bool p_is_req_asset, string p_proc_uuid )
+	public void f_RequestDownloadFiles( List<ContentInformation> p_req_download_list , bool p_is_req_asset, string p_proc_uuid )
 	{
 		// リクエスト処理開始、初期化
-		ClearRequest ();
+		f_ClearRequest ();
 		foreach (ContentInformation req_contents in p_req_download_list)
 		{
 			if (req_contents._download_status != ContentsAccess.enmDownloadStatus.WAITING_FOR_START)
@@ -84,16 +84,16 @@ public class DownloadModel : FileAccess {
 			req_contents._proc_uuid = p_proc_uuid;
 			if ( p_is_req_asset )
 			{
-				GetAssetBandle ( req_contents );
+				f_GetAssetBandle ( req_contents );
 			}
 			else
 			{
-				GetFile ( req_contents );
+				f_GetFile ( req_contents );
 			}
 		}
 	}
 
-	public void ClearRequest()
+	public void f_ClearRequest()
 	{
 		m_request_done = false;
 
@@ -102,7 +102,7 @@ public class DownloadModel : FileAccess {
 		}
 	}
 
-	public void ClearRequest( string p_req_name , bool p_abort )
+	public void f_ClearRequest( string p_req_name , bool p_abort )
 	{
 
 		m_request_done = false;
@@ -131,18 +131,18 @@ public class DownloadModel : FileAccess {
 		}
 	}
 
-	private void GetFile( ContentInformation p_content_information )
+	private void f_GetFile( ContentInformation p_content_information )
 	{
 		m_req_contents.Add( p_content_information );
 
 		// Clear Cache
 		Caching.CleanCache();
 
-		StartCoroutine ( Download( p_content_information ));
+		StartCoroutine ( f_Download( p_content_information ));
 	}
 
 	// IEnumerator の外にthrow すと例外エラーになるのでこのメソッド内でエラー処理しておく
-	private IEnumerator Download( ContentInformation p_content_information )
+	private IEnumerator f_Download( ContentInformation p_content_information )
 	{
 
 		string url = m_domain + p_content_information._file_name;
@@ -155,10 +155,10 @@ public class DownloadModel : FileAccess {
 			}
 
 			if (w3.error != null) {
-				SetDownloadStatus (p_content_information._file_name, ContentsAccess.enmDownloadStatus.ERROR_EXIT);
+				f_SetDownloadStatus (p_content_information._file_name, ContentsAccess.enmDownloadStatus.ERROR_EXIT);
 			} else {
 
-				SetDownloadStatus (p_content_information._file_name, ContentsAccess.enmDownloadStatus.COMPLETE);
+				f_SetDownloadStatus (p_content_information._file_name, ContentsAccess.enmDownloadStatus.COMPLETE);
 				p_content_information._content_type = ContentsAccess.enmDownloadContentType.TEXT;
 				p_content_information._string_data = w3.text;
 				p_content_information._byte_data = w3.bytes;
@@ -168,11 +168,11 @@ public class DownloadModel : FileAccess {
 					f_Save (w3, p_content_information._file_name, p_content_information._request_save_data );
 				}
 
-				SetDownloadStatus (p_content_information._file_name, ContentsAccess.enmDownloadStatus.COMPLETE);
+				f_SetDownloadStatus (p_content_information._file_name, ContentsAccess.enmDownloadStatus.COMPLETE);
 			}
 		}
 
-		if (IsCompleateDownload ()) {
+		if ( f_IsCompleateDownload ()) {
 			f_OnCompleat (m_req_contents);
 		}
 		
@@ -183,7 +183,7 @@ public class DownloadModel : FileAccess {
 	/// 既にキャッシュがあればそちらから取り出す。
 	/// </summary>
 	/// <param name="p_download_file_name">A download file name.</param>
-	private void GetAssetBandle( ContentInformation p_content_information )
+	private void f_GetAssetBandle( ContentInformation p_content_information )
 	{
 		
 		m_req_contents.Add( p_content_information );
@@ -192,11 +192,11 @@ public class DownloadModel : FileAccess {
 		Caching.CleanCache();
 		
 
-		StartCoroutine ( DownloadAndCache( p_content_information ) );
+		StartCoroutine ( f_DownloadAndCache( p_content_information ) );
 
 	}
 
-	private IEnumerator DownloadAndCache ( ContentInformation p_content_information )
+	private IEnumerator f_DownloadAndCache ( ContentInformation p_content_information )
 	{
 
 		#if   UNITY_ANDROID && !UNITY_EDITOR
@@ -241,7 +241,7 @@ public class DownloadModel : FileAccess {
 
 			if (w3.error != null)
 			{
-				SetDownloadStatus (p_content_information._file_name, ContentsAccess.enmDownloadStatus.ERROR_EXIT);
+				f_SetDownloadStatus (p_content_information._file_name, ContentsAccess.enmDownloadStatus.ERROR_EXIT);
 			}
 			else
 			{
@@ -264,19 +264,19 @@ public class DownloadModel : FileAccess {
 					m_req_contents [req_idx]._content_type = ContentsAccess.enmDownloadContentType.UNKNOWN;
 				}
 
-				SetDownloadStatus (p_content_information._file_name, ContentsAccess.enmDownloadStatus.COMPLETE);
+				f_SetDownloadStatus (p_content_information._file_name, ContentsAccess.enmDownloadStatus.COMPLETE);
 			}
 
 
 		}
 
-		if (IsCompleateDownload ()) {
+		if ( f_IsCompleateDownload ()) {
 			f_OnCompleat (m_req_contents);
 			m_request_done = true;
 		}
 	}
 
-	public void SetDownloadStatus( string aAssetName , ContentsAccess.enmDownloadStatus aStatus )
+	public void f_SetDownloadStatus( string aAssetName , ContentsAccess.enmDownloadStatus aStatus )
 	{
 		foreach (ContentInformation req in m_req_contents) {
 			if( req._file_name == aAssetName )
@@ -286,7 +286,7 @@ public class DownloadModel : FileAccess {
 		}
 	}
 
-	private bool IsCompleateDownload()
+	private bool f_IsCompleateDownload()
 	{
 		if( m_request_done )
 			return false;

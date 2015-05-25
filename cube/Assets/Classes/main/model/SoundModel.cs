@@ -23,7 +23,6 @@ public class SoundModel : FileAccess {
 	{
 
 		AudioClip audio_clip = new AudioClip ();
-//		FileAccess file = new FileAccess ();
 
 		// ダウンロードファイルから検索
 		string file_path = PREFAB_ROOT + p_request_file_name;

@@ -89,7 +89,7 @@ public class DownloadController : EventManagerDynamic {
 		m_downloadmodel._domain = (_domain_name == null ) ? DEFAULT_DOMAIN : _domain_name;
 		m_downloadmodel.f_OnCompleat = f_OnDownloadCompleate;
 
-		m_downloadmodel.RequestDownloadFiles( m_download_list , false, proc_uuid );
+		m_downloadmodel.f_RequestDownloadFiles( m_download_list , false, proc_uuid );
 
 	}
 
@@ -115,7 +115,7 @@ public class DownloadController : EventManagerDynamic {
 		m_downloadmodel = emptyGameObject.AddComponent<DownloadModel> ();
 		m_downloadmodel._domain = (_domain_name == null ) ? DEFAULT_DOMAIN : _domain_name;
 		m_downloadmodel.f_OnCompleat = f_OnDownloadCompleate;
-		m_downloadmodel.RequestDownloadFiles( m_download_list , true, proc_uuid );
+		m_downloadmodel.f_RequestDownloadFiles( m_download_list , true, proc_uuid );
 
 	}
 
