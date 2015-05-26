@@ -64,8 +64,18 @@
      <Compile Include="Assets\Classes\main\model\SoundModel.cs" />
      <Compile Include="Assets\Classes\main\util\DataEvet.cs" />
      <Compile Include="Assets\Classes\main\util\DownloadEvent.cs" />
+     <Compile Include="Assets\Classes\main\util\SaveData.cs" />
      <Compile Include="Assets\Classes\main\util\SoundEvent.cs" />
      <Compile Include="Assets\Classes\main\view\ObjPrefabView.cs" />
+     <Compile Include="Assets\Pligin\LitJson\IJsonWrapper.cs" />
+     <Compile Include="Assets\Pligin\LitJson\JsonData.cs" />
+     <Compile Include="Assets\Pligin\LitJson\JsonException.cs" />
+     <Compile Include="Assets\Pligin\LitJson\JsonMapper.cs" />
+     <Compile Include="Assets\Pligin\LitJson\JsonReader.cs" />
+     <Compile Include="Assets\Pligin\LitJson\JsonWriter.cs" />
+     <Compile Include="Assets\Pligin\LitJson\Lexer.cs" />
+     <Compile Include="Assets\Pligin\LitJson\ParserToken.cs" />
+     <Compile Include="Assets\Pligin\MiniJson\MiniJSON.cs" />
      <None Include="Assets\Resources\text\dllist.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

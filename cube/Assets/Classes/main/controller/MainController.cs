@@ -122,10 +122,17 @@ public class MainController : MonoBehaviour {
 	// サウンドコントローラ用のGameObject
 	GameObject m_sound_go = null;
 
+	// データコントローラのGameObject
+	GameObject m_data_go = null;
+
+	// データ
 	void Awake()
 	{
 		m_sound_go = new GameObject ("SoundController");
 		m_sound_go.AddComponent<SoundController>();
+
+		m_data_go = new GameObject ("DataController");
+		m_data_go.AddComponent<DataController> ();
 	}
 
 	// Use this for initialization
@@ -139,6 +146,7 @@ public class MainController : MonoBehaviour {
 
 		//
 		GameObject obj = Instantiate(Resources.Load("Prefab/obj01")) as GameObject;
+		obj.name = "save";
 		obj.transform.position = new Vector3(5,5,0);
 		obj.AddComponent<ObjPrefabView> ();
 
