@@ -3,15 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
+/// <summary>
+/// サウンド情報
+/// </summary>
 public class SoundInformation
 {
-
+	// ファイルパス
 	private string m_file_path;
 	public string _file_path {
 		get { return m_file_path; 	}
 		set { m_file_path = value;	}
 	}
 
+	// ファイル名
 	private string m_file_name;
 	public string _file_name {
 		get { 
@@ -22,6 +26,7 @@ public class SoundInformation
 		}
 	}
 
+	// 拡張子
 	private string m_file_extention;
 	public string _file_extention {
 		get { 
@@ -32,12 +37,14 @@ public class SoundInformation
 		}
 	}
 
+	// 再生繰り返し数
 	private int m_loop_count;
 	public int _loop_count{
 		get { return m_loop_count; }
 		set { m_loop_count = value; }
 	}
 
+	// オーディオクリップ
 	private AudioClip m_audio_clip;
 	public AudioClip _audio_clip
 	{
@@ -45,6 +52,7 @@ public class SoundInformation
 		set { m_audio_clip = value; }
 	}
 
+	// オーディイオソース
 	private AudioSource m_audio_source;
 	public AudioSource _audio_source
 	{
@@ -52,9 +60,28 @@ public class SoundInformation
 		set { m_audio_source = value; }
 	}
 
+	// 再生時間
+	public float _play_time
+	{
+		get{ return (m_audio_source != null) ? m_audio_source.time : -0.1f; }
+	}
+
+	// 総再生時間
+	public float _sound_length
+	{
+		get{ return (m_audio_clip != null) ? m_audio_clip.length : -0.1f; }
+	}
+
+	// ボリューム
+	public float _volume
+	{
+		get { return (m_audio_source != null) ? m_audio_source.volume : -0.1f; }
+		set { m_audio_source.volume = value; }
+	}
+
 	// リストを使用するので一意性を担保する為にハッシュ値を持つ
 	private int m_hash;
-
+	
 	public SoundInformation( string p_file_name )
 	{
 		m_file_path = p_file_name;
@@ -66,6 +93,26 @@ public class SoundInformation
 
 }
 
+/// <summary>
+/// サウンドコントローラ(シングルトン　)
+/// ■コンストラクタ
+/// GameObject "SoundController"に紐づける為、メインのAwake()で AddComponet すること。
+/// ex).
+/// 
+/// GameObject m_sound_go = null;
+/// void Awake()
+/// {
+/// 	m_sound_go = new GameObject ("SoundController");
+/// 	m_sound_go.AddComponent<SoundController>();
+/// }
+/// 
+/// ■メソッド
+/// コンストラクタの呼び出し後であれば、シーンにまたがり、以下の書式で
+/// アクセス可能
+/// 
+/// SoundController.Instance.M-e-t-h-o-d(p_-)
+/// 
+/// </summary>
 public class SoundController : SingletonMonoBehaviour<SoundController>
 {
 	public const int SE_CHANEL_MAX = 3;
@@ -96,6 +143,11 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 
 	}
 
+	/// <summary>
+	/// サウンドファイル名一覧から、再生可能なオブジェクトを生成する。
+	/// </summary>
+	/// <returns><c>true</c>, if attach list was f_ed, <c>false</c> otherwise.</returns>
+	/// <param name="p_request_list">p_request_list.</param>
 	public bool f_AttachList( List<string> p_request_list )
 	{
 		if (p_request_list == null)
@@ -109,6 +161,10 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 		return true;
 	}
 
+	/// <summary>
+	/// サウンド名でサウンド情報を検索する
+	/// </summary>
+	/// <param name="p_name">p_name.検索するサウンド名</param>
 	public SoundInformation f_search_information(string p_name)
 	{
 		if (m_info_list == null || m_info_list.Count < 0)
@@ -126,6 +182,10 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 		return null;
 	}
 
+	/// <summary>
+	/// サウンド情報を内部リストから削除する
+	/// </summary>
+	/// <param name="p_info">p_info.サウンド情報</param>
 	public bool f_remove_information( SoundInformation p_info )
 	{
 		if (m_info_list == null || m_info_list.Count < 0)
@@ -136,8 +196,11 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 		return true;
 	}
 
-
-	// サウンド情報をアタッチする
+	/// <summary>
+	/// サウンド情報をアタッチする
+	/// </summary>
+	/// <returns>The attach.</returns>
+	/// <param name="p_request_file_name">p_request_file_name.アタッチするサウンド名</param>
 	public SoundInformation f_Attach( string p_request_file_name )
 	{
 
@@ -167,6 +230,10 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 		return info;
 	}
 
+	/// <summary>
+	/// サウンド情報を内部リストから削除する
+	/// </summary>
+	/// <param name="p_request">p_request.</param>
 	public void f_Detach( SoundInformation p_request )
 	{
 		SoundInformation info = f_search_information( p_request._file_name );
@@ -177,7 +244,13 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 	}
 
 	private int m_bgm_loop_count = -1;
-	// 初回プレー時、ファイル名からサウンド詳細を生成し再生開始
+
+	/// <summary>
+	/// 初回再生時、ファイル名からサウンド詳細を生成し再生開始
+	/// </summary>
+	/// <returns>SoundInfomation.サウンド情報を返す</returns>
+	/// <param name="p_file_name">p_file_name.ファイル名</param>
+	/// <param name="p_loop_count">p_loop_count.ループカウント</param>
 	public SoundInformation f_Play( string p_file_name, int p_loop_count = -1 )
 	{
 		SoundInformation info = f_search_information (p_file_name);
@@ -194,7 +267,10 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 		return info;
 	}
 
-	// 次回からの再生
+	/// <summary>
+	/// サウンド情報で再生.
+	/// </summary>
+	/// <param name="p_info">p_info.サウンド情報</param>
 	public void f_Play( SoundInformation p_info )
 	{
 		if (p_info == null) {
@@ -208,7 +284,10 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 		Debug.Log ("f_Stop status="+p_info._audio_source.isPlaying +" file="+ p_info._file_name);
 	}
 
-	// 停止
+	/// <summary>
+	/// 停止
+	/// </summary>
+	/// <param name="p_info">p_info.</param>
 	public void f_Stop( SoundInformation p_info )
 	{
 		if (p_info == null) {
@@ -220,7 +299,10 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 		Debug.Log ("f_Stop status="+p_info._audio_source.isPlaying +" file="+ p_info._file_name);
 	}
 
-	// 一時停止
+	/// <summary>
+	/// 一時停止
+	/// </summary>
+	/// <param name="p_info">p_info.</param>
 	public void f_Pause( SoundInformation p_info )
 	{
 		if (p_info == null) {
@@ -232,6 +314,10 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 		Debug.Log ("f_Pause status="+p_info._audio_source.isPlaying +" file="+ p_info._file_name);
 	}
 
+	/// <summary>
+	/// 一時停止解除
+	/// </summary>
+	/// <param name="p_info">p_info.</param>
 	public void f_UnPause( SoundInformation p_info )
 	{
 		if (p_info == null) {

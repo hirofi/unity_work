@@ -320,6 +320,8 @@ public class MainController : MonoBehaviour {
 		if( m_gm_objects == null )
 			m_gm_objects = new GameObject[10];
 
+		float x = -5.0f;
+		float y = 0.0f;
 		foreach (ContentInformation content_info in aEvent._request_contents) {
 
 			if( content_info._download_status == ContentsAccess.enmDownloadStatus.COMPLETE )
@@ -328,7 +330,8 @@ public class MainController : MonoBehaviour {
 				m_gm_objects [m_gm_object_count].name = content_info._file_name;
 				m_gm_objects [m_gm_object_count].AddComponent<ObjPrefabView>();
 				var mypos = transform.position;
-				var addpos = new Vector3 (Random.value*10, Random.value*10, Random.value*10);
+//				var addpos = new Vector3 (Random.value*10, Random.value*10, Random.value*10);
+				var addpos = new Vector3 (x+=2, y++, 0.0f);
 				mypos += addpos;
 
 				m_gm_objects [m_gm_object_count].transform.position = mypos;
