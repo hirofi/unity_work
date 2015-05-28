@@ -31,14 +31,14 @@ public class DataController : SingletonMonoBehaviour<DataController>
 		;
 	}
 
-	public void f_SaveData( SaveData p_save_data )
+	public void f_SaveData( SaveData p_save_data , string p_save_name = SAVE_DATA_FILE_NAME )
 	{
-		m_data_model.f_Save( SAVE_DATA_FILE_NAME, p_save_data);
+		m_data_model.f_Save( p_save_name, p_save_data);
 	}
 
-	public SaveData f_LoadData()
+	public SaveData f_LoadData( string p_save_name = SAVE_DATA_FILE_NAME )
 	{
-		return m_data_model.f_Load( SAVE_DATA_FILE_NAME );
+		return m_data_model.f_Load( p_save_name );
 	}
 
 }

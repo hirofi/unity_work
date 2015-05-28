@@ -125,20 +125,40 @@ public class MainController : MonoBehaviour {
 	// データコントローラのGameObject
 	GameObject m_data_go = null;
 
+	GameObject m_system_info = null;
+
+	// シーン切り替えディスパッチャ用
+	GameObject m_scene_go = null;
+
+	// ポップアップ切り替えディスパッチャ用
+	GameObject m_popup_go = null;
+
+
 	// データ
 	void Awake()
 	{
+		m_system_info = new GameObject("SystemWatcher");
+		m_system_info.AddComponent<AllocMem>();
+
 		m_sound_go = new GameObject ("SoundController");
 		m_sound_go.AddComponent<SoundController>();
 
 		m_data_go = new GameObject ("DataController");
 		m_data_go.AddComponent<DataController> ();
+
+		m_scene_go = new GameObject ("SceneDispater");
+		m_scene_go.AddComponent<SceneDispater> ();
+
+		m_popup_go = new GameObject ("PopUpDispatcher");
+		m_popup_go.AddComponent<PopUpDispatcher> ();
+
 	}
 
 	// Use this for initialization
 	void Start () {
 		m_now_sequence = enmSequence.INITIALIZE;
 
+		// サウンドの登録
 		SoundController.Instance.f_Attach ("bgm_wav_01");
 		SoundController.Instance.f_Attach ("bgm_ogg_01");
 		SoundController.Instance.f_Attach ("bgm_wav_02");
@@ -149,6 +169,11 @@ public class MainController : MonoBehaviour {
 		obj.name = "save";
 		obj.transform.position = new Vector3(5,5,0);
 		obj.AddComponent<ObjPrefabView> ();
+
+		// シーンとポップアップの切り替え
+		SceneDispater.Instance._event_manager.f_AddListener<Scene01Event> (f_OnScene01);
+		SceneDispater.Instance._event_manager.f_AddListener<SceneGeneralEvent> (f_OnSceneGeneral);
+		PopUpDispatcher.Instance._event_manager.f_AddListener<PopUpEvent> (f_OnPopUp);
 
 	}
 	
@@ -410,6 +435,21 @@ public class MainController : MonoBehaviour {
 	void f_OnSoundChangeStatus( SoundEvent aEvent )
 	{
 		
+	}
+
+	void f_OnPopUp(PopUpEvent e)
+	{
+		Debug.Log ("f_OnPopUp");
+	}
+
+	void f_OnScene01(Scene01Event e)
+	{
+		Debug.Log ("f_OnScene01");
+	}
+
+	void f_OnSceneGeneral(SceneGeneralEvent e)
+	{
+		Debug.Log ("f_OnSceneGeneral");
 	}
 
 }

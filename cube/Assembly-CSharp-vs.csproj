@@ -52,6 +52,7 @@
      <Compile Include="Assets\Classes\libs\FileAccess.cs" />
      <Compile Include="Assets\Classes\libs\GameException.cs" />
      <Compile Include="Assets\Classes\libs\SingletonMonoBehaviour.cs" />
+     <Compile Include="Assets\Classes\libs\SystemInfomation.cs" />
      <Compile Include="Assets\Classes\main\controller\AttackerController.cs" />
      <Compile Include="Assets\Classes\main\controller\DataController.cs" />
      <Compile Include="Assets\Classes\main\controller\DownloadController.cs" />
@@ -61,12 +62,18 @@
      <Compile Include="Assets\Classes\main\model\DataModel.cs" />
      <Compile Include="Assets\Classes\main\model\DownloadModel.cs" />
      <Compile Include="Assets\Classes\main\model\MapModel.cs" />
+     <Compile Include="Assets\Classes\main\model\Mover.cs" />
      <Compile Include="Assets\Classes\main\model\SoundModel.cs" />
      <Compile Include="Assets\Classes\main\util\DataEvet.cs" />
      <Compile Include="Assets\Classes\main\util\DownloadEvent.cs" />
+     <Compile Include="Assets\Classes\main\util\PopUpEvent.cs" />
      <Compile Include="Assets\Classes\main\util\SaveData.cs" />
+     <Compile Include="Assets\Classes\main\util\Scene01Event.cs" />
+     <Compile Include="Assets\Classes\main\util\SceneGeneralEvent.cs" />
      <Compile Include="Assets\Classes\main\util\SoundEvent.cs" />
      <Compile Include="Assets\Classes\main\view\ObjPrefabView.cs" />
+     <Compile Include="Assets\Classes\main\view\PopUpDispatcher.cs" />
+     <Compile Include="Assets\Classes\main\view\SceneDispater.cs" />
      <Compile Include="Assets\Pligin\LitJson\IJsonWrapper.cs" />
      <Compile Include="Assets\Pligin\LitJson\JsonData.cs" />
      <Compile Include="Assets\Pligin\LitJson\JsonException.cs" />
