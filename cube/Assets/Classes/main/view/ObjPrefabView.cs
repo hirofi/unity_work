@@ -40,16 +40,14 @@ public class ObjPrefabView : MonoBehaviour {
 				m_sound_information = SoundController.Instance.f_Play("bgm_wav_01");
 				m_sound_information._volume = 0.2f;
 
-				PopUpEvent e = new PopUpEvent();
-				PopUpDispatcher.Instance._event_manager.f_Dispatch(e);
+				PopUpView.Instance._event_manager.f_Dispatch( new PopUpEvent("Test Message.",PopUpEvent.enmPopUpButtonType.CLOSE_ONRY,PopUpEvent.enmPopUpDestroyType.ONE_SHOT) );
 			}
 			else if( this.name == "pf02")
 			{
 				m_sound_information = SoundController.Instance.f_Play("bgm_ogg_01");
 				m_sound_information._volume = 1.0f;
 
-				Scene01Event e = new Scene01Event();
-				SceneDispater.Instance._event_manager.f_Dispatch(e);
+				SceneView.Instance._event_manager.f_Dispatch( new Scene01Event() );
 
 			}
 			else if( this.name == "pf03")
@@ -57,8 +55,7 @@ public class ObjPrefabView : MonoBehaviour {
 				m_sound_information = SoundController.Instance.f_Play("bgm_wav_02");
 				m_sound_information._volume = 0.2f;
 
-				SceneGeneralEvent e = new SceneGeneralEvent();
-				SceneDispater.Instance._event_manager.f_Dispatch(e);
+				SceneView.Instance._event_manager.f_Dispatch(new SceneGeneralEvent());
 
 			}
 			else if( this.name == "pf04")

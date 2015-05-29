@@ -147,10 +147,10 @@ public class MainController : MonoBehaviour {
 		m_data_go.AddComponent<DataController> ();
 
 		m_scene_go = new GameObject ("SceneDispater");
-		m_scene_go.AddComponent<SceneDispater> ();
+		m_scene_go.AddComponent<SceneView> ();
 
 		m_popup_go = new GameObject ("PopUpDispatcher");
-		m_popup_go.AddComponent<PopUpDispatcher> ();
+		m_popup_go.AddComponent<PopUpView> ();
 
 	}
 
@@ -171,9 +171,9 @@ public class MainController : MonoBehaviour {
 		obj.AddComponent<ObjPrefabView> ();
 
 		// シーンとポップアップの切り替え
-		SceneDispater.Instance._event_manager.f_AddListener<Scene01Event> (f_OnScene01);
-		SceneDispater.Instance._event_manager.f_AddListener<SceneGeneralEvent> (f_OnSceneGeneral);
-		PopUpDispatcher.Instance._event_manager.f_AddListener<PopUpEvent> (f_OnPopUp);
+		SceneView.Instance._event_manager.f_AddListener<Scene01Event> (f_OnScene01);
+		SceneView.Instance._event_manager.f_AddListener<SceneGeneralEvent> (f_OnSceneGeneral);
+		PopUpView.Instance._event_manager.f_AddListener<PopUpEvent> (f_OnPopUp);
 
 	}
 	

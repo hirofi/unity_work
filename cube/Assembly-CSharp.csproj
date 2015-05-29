@@ -72,8 +72,8 @@
      <Compile Include="Assets\Classes\main\util\SceneGeneralEvent.cs" />
      <Compile Include="Assets\Classes\main\util\SoundEvent.cs" />
      <Compile Include="Assets\Classes\main\view\ObjPrefabView.cs" />
-     <Compile Include="Assets\Classes\main\view\PopUpDispatcher.cs" />
-     <Compile Include="Assets\Classes\main\view\SceneDispater.cs" />
+     <Compile Include="Assets\Classes\main\view\PopUpView.cs" />
+     <Compile Include="Assets\Classes\main\view\SceneView.cs" />
      <Compile Include="Assets\Pligin\LitJson\IJsonWrapper.cs" />
      <Compile Include="Assets\Pligin\LitJson\JsonData.cs" />
      <Compile Include="Assets\Pligin\LitJson\JsonException.cs" />
