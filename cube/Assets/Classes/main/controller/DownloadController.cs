@@ -69,6 +69,12 @@ public class DownloadController : EventManagerDynamic {
 	private DownloadEvent.enmDownloadFileType m_download_file_type;
 	private DownloadModel m_downloadmodel;
 
+
+	public DownloadController()
+	{
+		m_download_list = new List<ContentInformation> ();
+	}
+
 	/// <summary>
 	/// アセットバンドル以外のファイルをダウンロードする
 	/// </summary>

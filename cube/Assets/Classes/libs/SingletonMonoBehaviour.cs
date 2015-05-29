@@ -14,7 +14,7 @@ public class SingletonMonoBehaviour<T> : MonoBehaviour where T : MonoBehaviour
 					Debug.LogError (typeof(T) + " is nothing");
 				}
 			}
-			
+
 			return instance;
 		}
 	}

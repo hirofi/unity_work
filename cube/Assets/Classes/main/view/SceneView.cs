@@ -13,6 +13,9 @@ public class SceneView : SingletonMonoBehaviour<SceneView> {
 	{
 		if (m_event_manager == null)
 			m_event_manager = new EventManagerDynamic ();
+
+		DontDestroyOnLoad(this.gameObject);
+
 	}
 
 }

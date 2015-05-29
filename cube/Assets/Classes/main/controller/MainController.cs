@@ -108,11 +108,7 @@ public class GameEventError : GameEventDynamic
 
 
 public class MainController : MonoBehaviour {
-
-	DownloadController m_down_load = null;
-	DownloadController m_list_download = null;
-	DownloadController m_sound_file_download = null;
-
+	
 	MapController m_map = null;
 	TextMesh m_progress_tm = null;
 
@@ -215,7 +211,7 @@ public class MainController : MonoBehaviour {
 			break;
 		case enmSequence.LOAD_DOWNLOAD_LIST:
 			m_now_sequence = enmSequence.NOP;
-			DoDownloadList();
+			f_GetDownloadList();
 
 			break;
 		case enmSequence.LOAD_ASSET:
@@ -259,11 +255,11 @@ public class MainController : MonoBehaviour {
 	// -------------
 	// ダウンロード対象のアセット一覧取得開始処理
 	// -------------
-	void DoDownloadList()
+	DownloadController m_list_download = null;
+	void f_GetDownloadList()
 	{
 		m_list_download = new DownloadController ();
-		m_list_download.f_AddListener<DownloadEvent>(OnCompleateListDownload);
-		m_list_download._download_list = new List<ContentInformation> ();
+		m_list_download.f_AddListener<DownloadEvent>(f_OnCompleateListDownload);
 		ContentInformation info = new ContentInformation ("dllist.txt", 0);
 		info._request_save_data = true;
 		m_list_download._download_list.Add (info);
@@ -279,12 +275,13 @@ public class MainController : MonoBehaviour {
 	// -------------
 	List<string> m_prefab_name_list = new List<string>();
 	List<string> m_sound_file_name_list = new List<string>();
-	public void OnCompleateListDownload( DownloadEvent aEvent )
+	public void f_OnCompleateListDownload( DownloadEvent aEvent )
 	{
 		// ダウンロードリスト取得完了時
 		if (aEvent._download_file_type != DownloadEvent.enmDownloadFileType.DOWNLOAD_ORDER_LIST)
 			return;
 
+		// リスト文字列をパースしてアセットとサウンドファイルのダウンロードを開始する
 		foreach ( ContentInformation content_info in aEvent._request_contents)
 		{
 			if( content_info._string_data != null )
@@ -292,10 +289,10 @@ public class MainController : MonoBehaviour {
 				Dictionary< string, List<string> > req_list = m_list_download.f_GetDownloadLists(content_info._string_data);
 
 				// アセットのダウンロード
-				DoDownloadAsset( req_list[DownloadController.PREFAB_FILE_LIST] );
+				f_DoDownloadAsset( req_list[DownloadController.PREFAB_FILE_LIST] );
 				
 				// サウンドファイルのダウンロード
-				DoDownloadFile( req_list[DownloadController.SOUND_FILE_LIST] );
+				f_DoDownloadFile( req_list[DownloadController.SOUND_FILE_LIST] );
 
 			}
 
@@ -318,11 +315,11 @@ public class MainController : MonoBehaviour {
 	// -------------
 	// アセットダウンロード開始処理
 	// -------------
-	void DoDownloadAsset( List<string> aFileNameList )
+	DownloadController m_down_load = null;
+	void f_DoDownloadAsset( List<string> aFileNameList )
 	{
 		m_down_load = new DownloadController ();
-		m_down_load.f_AddListener<DownloadEvent> (OnCompleateAssetDownload);
-		m_down_load._download_list = new List<ContentInformation> ();
+		m_down_load.f_AddListener<DownloadEvent> (f_OnCompleateAssetDownload);
 
 		foreach (string file_name in aFileNameList)
 			m_down_load._download_list.Add (new ContentInformation (file_name, 0));
@@ -335,7 +332,7 @@ public class MainController : MonoBehaviour {
 	// -------------
 	// アセットダウンロード完了処理
 	// -------------
-	public void OnCompleateAssetDownload( DownloadEvent aEvent )
+	public void f_OnCompleateAssetDownload( DownloadEvent aEvent )
 	{
 
 		// アセットダウダウンロード完了時
@@ -375,13 +372,13 @@ public class MainController : MonoBehaviour {
 	// -------------
 	// ファイルダウンロード開始処理
 	// -------------
+	DownloadController m_sound_file_download = null;
 	List<DownloadController> m_file_download = new List<DownloadController>();
-	void DoDownloadFile( List<string> p_file_name )
+	void f_DoDownloadFile( List<string> p_file_name )
 	{
 
 		m_sound_file_download = new DownloadController ();
-		m_sound_file_download.f_AddListener<DownloadEvent> (OnCompleateFileDownload);
-		m_sound_file_download._download_list = new List<ContentInformation> ();
+//		m_sound_file_download._download_list = new List<ContentInformation> ();
 
 		foreach (string file_name in p_file_name) {
 			ContentInformation info = new ContentInformation (file_name, 0);
@@ -391,6 +388,9 @@ public class MainController : MonoBehaviour {
 
 		m_sound_file_download._domain_name = "http://210.140.154.119:82/";
 		m_sound_file_download._download_request_type = DownloadController.enmDownloadRequestType.REQUEST_DATA_FILE;
+
+		// リスナーを登録
+		m_sound_file_download.f_AddListener<DownloadEvent> (OnCompleateFileDownload);
 
 	}
 	
