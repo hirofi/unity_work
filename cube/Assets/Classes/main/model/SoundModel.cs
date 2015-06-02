@@ -32,15 +32,7 @@ public class SoundModel : FileAccess {
 			Debug.Log ("sound from included prefabdata file");
 			return audio_clip;
 		}
-/*
-		// AssetBandle から検索
-		f_LoadAsset (p_request_file_name);
-		if (_audio_clip) {
 
-			Debug.Log ("sound from asset bandle");
-			return _audio_clip;
-		}
-*/
 		// 同梱の Asset/Resource/sound から検索
 		string sound_name = SOUND_ROOT + p_request_file_name;
 		audio_clip = (AudioClip)Resources.Load( sound_name );
