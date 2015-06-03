@@ -1,12 +1,8 @@
 ﻿<Properties GitUserInfo="UsingMD">
   <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="..\cube\Assets\Classes\main\controller\MainController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="..\cube\Assets\Classes\main\controller\MoverController.cs">
     <Files>
-      <File FileName="..\cube\Assets\Classes\main\controller\DataController.cs" Line="23" Column="4" />
-      <File FileName="..\cube\Assets\Classes\main\controller\SoundController.cs" Line="211" Column="4" />
-      <File FileName="..\cube\Assets\Classes\main\controller\MainController.cs" Line="131" Column="51" />
-      <File FileName="..\cube\Assets\Classes\main\model\SoundModel.cs" Line="22" Column="36" />
-      <File FileName="..\cube\Assets\Classes\libs\FileAccess.cs" Line="17" Column="17" />
+      <File FileName="..\cube\Assets\Classes\main\controller\MoverController.cs" Line="22" Column="2" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

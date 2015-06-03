@@ -129,6 +129,8 @@ public class MainController : MonoBehaviour {
 	// ポップアップ切り替えディスパッチャ用
 	GameObject m_popup_go = null;
 
+	private MoverController m_mover_controller = null;
+
 
 	// データ
 	void Awake()
@@ -171,6 +173,10 @@ public class MainController : MonoBehaviour {
 		SceneView.Instance._event_manager.f_AddListener<SceneGeneralEvent> (f_OnSceneGeneral);
 		PopUpView.Instance._event_manager.f_AddListener<PopUpEvent> (f_OnPopUp);
 
+		m_mover_controller = new MoverController ();
+		for(int i=0; i<10; i++)
+			m_mover_controller.f_CreateMover("mover"+i.ToString(),null);
+
 	}
 	
 	// Update is called once per frame
@@ -182,7 +188,6 @@ public class MainController : MonoBehaviour {
 	{
 		DataManager.Instance.f_AddListener<GameEventDataAccess> (OnDataAccessCompleate);
 		ErrorManager.Instance.f_AddListener<GameEventError> (OnError);
-
 	}
 
 	// -------------

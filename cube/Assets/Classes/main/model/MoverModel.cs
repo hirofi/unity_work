@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Mover {
+public class MoverModel {
 
 	private int m_life_step;
 	public int _life_step{ get{ return m_life_step;} set { m_life_step = value;	} }
@@ -32,8 +32,8 @@ public class Mover {
 	private float m_search_radius; // 検索半径
 	public float _search_radius{ get{ return m_search_radius;} set { m_search_radius = value;	} }
 
-	private List<Mover> m_tartget; // ターゲットリスト
-	public List<Mover> _tartget{ get{ return m_tartget;} set { m_tartget = value;	} }
+	private List<MoverModel> m_tartget; // ターゲットリスト
+	public List<MoverModel> _tartget{ get{ return m_tartget;} set { m_tartget = value;	} }
 
 	private int m_lock_on_target_num; // 対象ターゲット番号 : なければ -1
 	public int _lock_on_target_num{ get{ return m_lock_on_target_num;} set { m_lock_on_target_num = value;	} }
@@ -64,13 +64,13 @@ public class Mover {
 	}
 
 	// 周囲検索
-	public void f_Search( Mover p_the_other )
+	public void f_Search( MoverModel p_the_other )
 	{
 		// ターゲット検索
 		if (f_Collision (p_the_other))
 		{
 			if(m_tartget == null)
-				m_tartget = new List<Mover>();
+				m_tartget = new List<MoverModel>();
 
 			// 範囲内になにかあれば保持
 			m_tartget.Add( p_the_other );
@@ -102,7 +102,7 @@ public class Mover {
 				
 	}
 
-	bool f_Collision(Mover p_target_mover )
+	bool f_Collision(MoverModel p_target_mover )
 	{
 		float dx,dy,r;
 		dx = m_position.x-p_target_mover._position.x;	// 水平方向の距離
