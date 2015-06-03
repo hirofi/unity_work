@@ -36,22 +36,7 @@ public class MoverController : MonoBehaviour {
 
 		GameObject obj_mover = Instantiate (Resources.Load ("Prefab/mover_01")) as GameObject;
 		obj_mover.name = p_name;
-
-		Vector3 addpos;
-		if (p_position != null)
-		{
-			obj_mover.transform.position = p_position;
-		}
-		else
-		{
-			addpos = new Vector3 (Random.value*10, Random.value*10, Random.value*10);
-
-			Vector3 mypos = transform.position;
-			mypos += addpos;
-			
-			obj_mover.transform.position = mypos;
-
-		}
+		obj_mover.transform.position = p_position;
 		m_movers.Add(obj_mover);
 
 	}

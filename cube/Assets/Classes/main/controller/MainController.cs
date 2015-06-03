@@ -174,8 +174,13 @@ public class MainController : MonoBehaviour {
 		PopUpView.Instance._event_manager.f_AddListener<PopUpEvent> (f_OnPopUp);
 
 		m_mover_controller = new MoverController ();
-		for(int i=0; i<10; i++)
-			m_mover_controller.f_CreateMover("mover"+i.ToString(),null);
+		for (int i=0; i<10; i++) {
+
+			Vector3 addpos = new Vector3 (Random.value*10, Random.value*10, Random.value*10);
+			Vector3 mypos = transform.position + addpos;
+
+			m_mover_controller.f_CreateMover ("mover" + i.ToString (), mypos);
+		}
 
 	}
 	

@@ -165,7 +165,7 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 	/// サウンド名でサウンド情報を検索する
 	/// </summary>
 	/// <param name="p_name">p_name.検索するサウンド名</param>
-	public SoundInformation f_search_information(string p_name)
+	public SoundInformation f_SearchInformation(string p_name)
 	{
 		if (m_info_list == null || m_info_list.Count < 0)
 			return null;
@@ -186,7 +186,7 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 	/// サウンド情報を内部リストから削除する
 	/// </summary>
 	/// <param name="p_info">p_info.サウンド情報</param>
-	public bool f_remove_information( SoundInformation p_info )
+	public bool f_RemoveInformation( SoundInformation p_info )
 	{
 		if (m_info_list == null || m_info_list.Count < 0)
 			return false;
@@ -204,7 +204,7 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 	public SoundInformation f_Attach( string p_request_file_name )
 	{
 
-		SoundInformation info = f_search_information( p_request_file_name );
+		SoundInformation info = f_SearchInformation( p_request_file_name );
 		
 		// 既に存在する場合は上書き
 		if (info != null)
@@ -236,10 +236,10 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 	/// <param name="p_request">p_request.</param>
 	public void f_Detach( SoundInformation p_request )
 	{
-		SoundInformation info = f_search_information( p_request._file_name );
+		SoundInformation info = f_SearchInformation( p_request._file_name );
 		Destroy (info._audio_source);
-		if (f_remove_information (info) == false) {
-			Debug.Log("ERROR : f_remove_information ");
+		if (f_RemoveInformation (info) == false) {
+			Debug.Log("ERROR : f_RemoveInformation ");
 		}
 	}
 
@@ -253,13 +253,17 @@ public class SoundController : SingletonMonoBehaviour<SoundController>
 	/// <param name="p_loop_count">p_loop_count.ループカウント</param>
 	public SoundInformation f_Play( string p_file_name, int p_loop_count = -1 )
 	{
-		SoundInformation info = f_search_information (p_file_name);
+		SoundInformation info = f_SearchInformation (p_file_name);
 		if (info == null) {
 			Debug.Log("Error:Unknown File =>"+p_file_name);
 			return null;
 		}
 
-		info._loop_count = p_loop_count;
+		if( p_loop_count == -1 )
+			info._audio_source.loop = true;
+		else
+			info._loop_count = p_loop_count;
+
 		info._audio_source.Play ();
 
 		Debug.Log ("f_Play status="+info._audio_source.isPlaying +" file="+ p_file_name);
